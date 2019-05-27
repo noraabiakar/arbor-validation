@@ -2,18 +2,18 @@
 {load_file("import3d.hoc")}
 
 begintemplate Cell
-    public soma, dend
-    create soma, dend
+    public soma//, dend
+    create soma//, dend
 proc init() {
-    connect dend(0), soma(0.5)
+    //connect dend(0), soma(0.5)
 
     soma.L = 11.65968
     soma.diam = 11.65968
-    dend.L = 200.0
-    dend.diam = 3.0
+    //dend.L = 200.0
+    //dend.diam = 3.0
 
     soma.nseg = 1
-    dend.nseg = 2000
+    //dend.nseg = 2000
 
     define_shape()
 }

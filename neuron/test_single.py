@@ -38,20 +38,20 @@ if in_param["hh"] :
     cell.soma.gkbar_hh = in_param["hh_gkbar"]
     cell.soma.gl_hh = in_param["hh_gl"]
 
-    cell.dend.insert("hh")
-    cell.dend.ena = in_param["hh_ena"]
-    cell.dend.ek = in_param["hh_ek"]
-    cell.dend.gnabar_hh = in_param["hh_gnabar"]
-    cell.dend.gkbar_hh = in_param["hh_gkbar"]
-    cell.dend.gl_hh = in_param["hh_gl"]
+    # cell.dend.insert("hh")
+    # cell.dend.ena = in_param["hh_ena"]
+    # cell.dend.ek = in_param["hh_ek"]
+    # cell.dend.gnabar_hh = in_param["hh_gnabar"]
+    # cell.dend.gkbar_hh = in_param["hh_gkbar"]
+    # cell.dend.gl_hh = in_param["hh_gl"]
 else :
     cell.soma.insert("pas")
     cell.soma.e_pas = in_param["pas_e"]
     cell.soma.g_pas = in_param["pas_g"]
 
-    cell.dend.insert("pas")
-    cell.dend.e_pas = in_param["pas_e"]
-    cell.dend.g_pas = in_param["pas_g"]
+    # cell.dend.insert("pas")
+    # cell.dend.e_pas = in_param["pas_e"]
+    # cell.dend.g_pas = in_param["pas_g"]
 
 ################################
 # Create spike times for input #
