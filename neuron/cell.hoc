@@ -1,0 +1,17 @@
+{load_file("stdrun.hoc")}
+{load_file("import3d.hoc")}
+
+begintemplate Cell_soma
+    public soma
+    create soma
+proc init() {
+    soma.L = 11.65968
+    soma.diam = 11.65968
+    define_shape()
+}
+endtemplate Cell_soma
+
+obfunc mkcell() { localobj import, cell
+    cell = new Cell_soma()
+    return cell
+}
