@@ -253,7 +253,7 @@ arb::cable_cell single_cell(const single_params& params) {
     auto dend = cell.add_cable(0, arb::section_kind::dendrite, 3.0/2.0, 3.0/2.0, 200);
     dend->set_compartments(2000);
 
-    if (params.hh) {
+    if (params.soma_hh) {
         auto hh = arb::mechanism_desc("hh");
         hh.set("ena", params.hh_ena);
         hh.set("ek", params.hh_ek);
@@ -262,13 +262,28 @@ arb::cable_cell single_cell(const single_params& params) {
         hh.set("gl", params.hh_gl);
 
         soma->add_mechanism(hh);
-        dend->add_mechanism(hh);
     } else {
         auto pas = arb::mechanism_desc("pas");
         pas.set("g", params.pas_g);
         pas.set("e", params.pas_e);
 
         soma->add_mechanism(pas);
+    }
+
+    if (params.dend_hh) {
+        auto hh = arb::mechanism_desc("hh");
+        hh.set("ena", params.hh_ena);
+        hh.set("ek", params.hh_ek);
+        hh.set("gnabar", params.hh_gnabar);
+        hh.set("gkbar", params.hh_gkbar);
+        hh.set("gl", params.hh_gl);
+
+        dend->add_mechanism(hh);
+    } else {
+        auto pas = arb::mechanism_desc("pas");
+        pas.set("g", params.pas_g);
+        pas.set("e", params.pas_e);
+
         dend->add_mechanism(pas);
     }
 

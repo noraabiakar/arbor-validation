@@ -30,14 +30,19 @@ syn.tau1 = in_param["tau1_syn"]
 syn.tau2 = in_param["tau2_syn"]
 syn.e = in_param["e_syn"]
 
-if in_param["hh"] :
+if in_param["soma_hh"] :
     cell.soma.insert("hh")
     cell.soma.ena = in_param["hh_ena"]
     cell.soma.ek = in_param["hh_ek"]
     cell.soma.gnabar_hh = in_param["hh_gnabar"]
     cell.soma.gkbar_hh = in_param["hh_gkbar"]
     cell.soma.gl_hh = in_param["hh_gl"]
+else :
+    cell.soma.insert("pas")
+    cell.soma.e_pas = in_param["pas_e"]
+    cell.soma.g_pas = in_param["pas_g"]
 
+if in_param["dend_hh"] :
     cell.dend.insert("hh")
     cell.dend.ena = in_param["hh_ena"]
     cell.dend.ek = in_param["hh_ek"]
@@ -45,10 +50,6 @@ if in_param["hh"] :
     cell.dend.gkbar_hh = in_param["hh_gkbar"]
     cell.dend.gl_hh = in_param["hh_gl"]
 else :
-    cell.soma.insert("pas")
-    cell.soma.e_pas = in_param["pas_e"]
-    cell.soma.g_pas = in_param["pas_g"]
-
     cell.dend.insert("pas")
     cell.dend.e_pas = in_param["pas_e"]
     cell.dend.g_pas = in_param["pas_g"]
