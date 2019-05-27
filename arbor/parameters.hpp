@@ -18,8 +18,7 @@ struct single_params {
     unsigned syn_seg;
     double syn_loc;
     double dt, weight;
-
-
+    bool hh;
 };
 
 single_params read_params(int argc, char** argv) {
@@ -61,6 +60,7 @@ single_params read_params(int argc, char** argv) {
     param_from_json(p.syn_seg, "syn_seg", json);
     param_from_json(p.syn_loc, "syn_loc", json);
     param_from_json(p.weight, "weight", json);
+    param_from_json(p.hh, "hh", json);
 
     for (auto it=json.begin(); it!=json.end(); ++it) {
         std::cout << "  Warning: unused input parameter: \"" << it.key() << "\"\n";
