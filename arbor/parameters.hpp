@@ -14,6 +14,7 @@ struct single_params {
     double temp, v_init;
     double tau1_syn, tau2_syn, e_syn;
     double hh_gnabar, hh_gkbar, hh_gl, hh_ena, hh_ek;
+    double pas_e, pas_g;
     unsigned syn_seg;
     double syn_loc;
     double dt, weight;
@@ -55,6 +56,8 @@ single_params read_params(int argc, char** argv) {
     param_from_json(p.hh_gl, "hh_gl", json);
     param_from_json(p.hh_ena, "hh_ena", json);
     param_from_json(p.hh_ek, "hh_ek", json);
+    param_from_json(p.pas_e, "pas_e", json);
+    param_from_json(p.pas_g, "pas_g", json);
     param_from_json(p.syn_seg, "syn_seg", json);
     param_from_json(p.syn_loc, "syn_loc", json);
     param_from_json(p.weight, "weight", json);
