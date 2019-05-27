@@ -262,14 +262,14 @@ arb::cable_cell single_cell(const single_params& params) {
         hh.set("gl", params.hh_gl);
 
         soma->add_mechanism(hh);
-        //dend->add_mechanism(hh);
+        dend->add_mechanism(hh);
     } else {
         auto pas = arb::mechanism_desc("pas");
         pas.set("g", params.pas_g);
         pas.set("e", params.pas_e);
 
         soma->add_mechanism(pas);
-        //dend->add_mechanism(pas);
+        dend->add_mechanism(pas);
     }
 
     auto exp2syn = arb::mechanism_desc("exp2syn");
