@@ -23,8 +23,8 @@ h.load_file("cell.hoc")
 cell = h.mkcell()
 if in_param["syn_seg"] == 0 :
     syn = h.Exp2Syn(cell.soma(in_param["syn_loc"]))
-# else :
-#     syn = h.Exp2Syn(cell.dend(in_param["syn_loc"]))
+else :
+    syn = h.Exp2Syn(cell.dend(in_param["syn_loc"]))
 
 syn.tau1 = in_param["tau1_syn"]
 syn.tau2 = in_param["tau2_syn"]

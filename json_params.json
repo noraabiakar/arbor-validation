@@ -15,7 +15,7 @@
     "hh_ek": -77.0, 
     "pas_e": -65.0, 
     "pas_g": 0.001, 
-    "syn_seg": 0,
+    "syn_seg": 1,
     "syn_loc": 0.5,
     "weight": 1.17
 }
