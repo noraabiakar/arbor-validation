@@ -10,7 +10,7 @@ proc init() {
     soma.L = 11.65968
     soma.diam = 11.65968
     dend.L = 200.0
-    dend.diam = 3.0
+    dend.diam = 30
 
     soma.nseg = 1
     dend.nseg = 2000

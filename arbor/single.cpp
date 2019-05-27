@@ -250,7 +250,7 @@ arb::cable_cell single_cell(const single_params& params) {
     // Add soma.
     auto soma = cell.add_soma(11.65968/2.0);
 
-    auto dend = cell.add_cable(0, arb::section_kind::dendrite, 3.0/2.0, 3.0/2.0, 200);
+    auto dend = cell.add_cable(0, arb::section_kind::dendrite, 30.0/2.0, 30.0/2.0, 200);
     dend->set_compartments(2000);
 
     if (params.soma_hh) {
