@@ -1,17 +1,24 @@
 {load_file("stdrun.hoc")}
 {load_file("import3d.hoc")}
 
-begintemplate Cell_soma
-    public soma
-    create soma
+begintemplate Cell
+    public soma, dend
+    create soma, dend
 proc init() {
+    connect dend(0), soma(1)
+
     soma.L = 11.65968
     soma.diam = 11.65968
+    dend.L = 200.0
+    dend.diam = 3.0
+
+    dend.nseg = 2000
+
     define_shape()
 }
-endtemplate Cell_soma
+endtemplate Cell
 
 obfunc mkcell() { localobj import, cell
-    cell = new Cell_soma()
+    cell = new Cell()
     return cell
 }

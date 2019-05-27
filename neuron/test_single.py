@@ -5,6 +5,12 @@ import numpy as np
 import time as cookie
 import pylab as plt
 import pickle
+import json
+import sys
+
+with open(sys.argv[1]) as json_file:
+    in_param = json.load(json_file)
+
 np.random.seed(149)
 
 h.load_file("stdrun.hoc")
@@ -14,20 +20,34 @@ h.load_file("cell.hoc")
 # Creating cells #
 ##################
 
-cell_soma = h.mkcell()
-syn = h.Exp2Syn(cell_soma.soma(0.5))
-syn.tau1 = 0.5
-syn.tau2 = 1.5
-syn.e = 0
+cell = h.mkcell()
+if in_param["syn_seg"] == 0 :
+    syn = h.Exp2Syn(cell.soma(in_param["syn_loc"]))
+# else :
+#     syn = h.Exp2Syn(cell.dend(in_param["syn_loc"]))
+
+syn.tau1 = in_param["tau1_syn"]
+syn.tau2 = in_param["tau2_syn"]
+syn.e = in_param["e_syn"]
  
-cell_soma.soma.insert("hh")
-cell_soma.soma.ena = 50
-cell_soma.soma.ek = -77
+cell.soma.insert("hh")
+cell.soma.ena = in_param["hh_ena"]
+cell.soma.ek = in_param["hh_ek"]
+cell.soma.gnabar_hh = in_param["hh_gnabar"]
+cell.soma.gkbar_hh = in_param["hh_gkbar"]
+cell.soma.gl_hh = in_param["hh_gl"]
+
+# cell.dend.insert("hh")
+# cell.dend.ena = in_param["hh_ena"]
+# cell.dend.ek = in_param["hh_ek"]
+# cell.dend.gnabar_hh = in_param["hh_gnabar"]
+# cell.dend.gkbar_hh = in_param["hh_gkbar"]
+# cell.dend.gl_hh = in_param["hh_gl"]
 
 ################################
 # Create spike times for input #
 ################################
-tstop = 10000 # unts: ms
+tstop = 200 # unts: ms
 frequency = 5 # units: Hz
 
 vecstims = h.VecStim()
@@ -54,18 +74,21 @@ while flag:
            
         vecstims.play(evecs)
 
+for v in vec:
+    print v
+
 #####################
 # Connecting inputs #
 #####################
 nc = h.NetCon(vecstims, syn)
-nc.weight[0] = 1.17
+nc.weight[0] = in_param["weight"]
 nc.delay = 0
 
 ################################
 # Setting up vectors to record #
 ################################
 v = h.Vector()
-v.record(cell_soma.soma(0.5)._ref_v)
+v.record(cell.soma(0.5)._ref_v)
 
 t = h.Vector()
 t.record(h._ref_t)
@@ -73,10 +96,10 @@ t.record(h._ref_t)
 #########################
 # Setting up simulation #
 #########################
-h.v_init = -70
+h.v_init = in_param["vinit"]
 h.t = 0
-h.dt = 0.001
-h.celsius = 35.0
+h.dt = in_param["dt_neuron"]
+h.celsius = in_param["temp"]
 h("tstep = 0")
 h("period = 2")
 h.tstop = tstop

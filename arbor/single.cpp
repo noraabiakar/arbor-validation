@@ -7,8 +7,6 @@
 #include <iomanip>
 #include <iostream>
 
-#include <json.hpp>
-
 #include <arbor/assert_macro.hpp>
 #include <arbor/common_types.hpp>
 #include <arbor/context.hpp>
@@ -29,6 +27,8 @@
 #include <arborenv/with_mpi.hpp>
 #endif
 
+#include "parameters.hpp"
+
 using arb::cell_gid_type;
 using arb::cell_lid_type;
 using arb::cell_size_type;
@@ -41,18 +41,18 @@ using arb::cell_probe_address;
 void write_trace_json(const arb::trace_data<double>& trace);
 
 // Generate a cell.
-arb::cable_cell soma_cell();
+arb::cable_cell single_cell(const single_params& params);
 
 class soma_recipe: public arb::recipe {
 public:
-    soma_recipe(): num_cells_(1) {}
+    soma_recipe(single_params params): num_cells_(1), params_(params), event_weight_(params.weight) {}
 
     cell_size_type num_cells() const override {
         return num_cells_;
     }
 
     arb::util::unique_any get_cell_description(cell_gid_type gid) const override {
-        return soma_cell();
+        return single_cell(params_);
     }
 
     cell_kind get_cell_kind(cell_gid_type gid) const override {
@@ -75,25 +75,13 @@ public:
         arb::pse_vector svec;
 
         std::vector<double> spikes = {
-                25.269724183039855, 29.37076391451496, 58.472477010286546, 93.80268485203328,
-                112.71090127018375, 142.6472406502223, 293.3318516075217, 456.96763867081177,
-                559.0808556112847, 1091.4908947982385, 1265.7627055896965, 1286.3817213526308,
-                1726.173576102434, 1744.7268859340948, 2072.358562894649, 2429.33700123744,
-                2438.882187257708, 2444.85687651729, 2500.3783411639783, 2523.5435646207175,
-                2633.0843793058734, 2663.3213690478333, 3081.2091382891876, 3104.234316785872,
-                3209.158889778191, 3311.7494479555003, 3628.0607334944084, 3892.4078916268645,
-                3905.382779351989, 3972.478937325283, 4039.5190445966164, 4275.579471624872,
-                4761.533462201488, 4875.327265653268, 4946.068519184462, 5186.38947000671,
-                5250.193973512949, 5405.921064743746, 6075.548637890089, 6106.605889233615,
-                6392.503123563068, 6484.87209757147, 6622.667183819736, 7132.979244248274,
-                7214.140067854784, 7632.383314077037, 7662.664989661292, 7663.029726732657,
-                8205.521919274834, 8514.66346930178, 8998.325190823954, 9387.223218469393,
-                9453.933657798472, 9544.328220467469, 9858.711284584584, 9955.045230553718,
-                9956.054906300105
+                25.269724183039855, 29.37076391451496,
+                58.472477010286546, 93.80268485203328,
+                112.71090127018375, 142.6472406502223
         };
 
         for (auto s: spikes) {
-            svec.push_back({{0, 0}, s, event_weight_});
+            svec.push_back({{gid, 0}, s, event_weight_});
         }
         gens.push_back(arb::explicit_generator(svec));
         return gens;
@@ -115,14 +103,15 @@ public:
 
     arb::util::any get_global_properties(cell_kind k) const override {
         arb::cable_cell_global_properties a;
-        a.temperature_K = 308.15;
-        a.init_membrane_potential_mV = -70;
+        a.temperature_K = params_.temp + 273.15;
+        a.init_membrane_potential_mV = params_.v_init;
         return a;
     }
 
 private:
     cell_size_type num_cells_;
-    float event_weight_ = 1.17;
+    single_params params_;
+    float event_weight_;
 };
 
 
@@ -162,7 +151,8 @@ int main(int argc, char** argv) {
         meters.start(context);
 
         // Create an instance of our recipe.
-        soma_recipe recipe;
+        auto params = read_params(argc, argv);
+        soma_recipe recipe(params);
 
         auto decomp = arb::partition_load_balance(recipe, context);
 
@@ -195,7 +185,7 @@ int main(int argc, char** argv) {
 
         std::cout << "running simulation" << std::endl;
         // Run the simulation for 100 ms, with time steps of 0.025 ms.
-        sim.run(10000, 0.0025);
+        sim.run(200, params.dt);
 
         meters.checkpoint("model-run", context);
 
@@ -254,23 +244,33 @@ void write_trace_json(const arb::trace_data<double>& trace) {
     file << std::setw(1) << json << "\n";
 }
 
-arb::cable_cell soma_cell() {
+arb::cable_cell single_cell(const single_params& params) {
     arb::cable_cell cell;
 
     // Add soma.
-    auto soma = cell.add_soma(11.65968/2.0); // For area of 500 μm².
+    auto soma = cell.add_soma(11.65968/2.0);
+
+    auto dend = cell.add_cable(0, arb::section_kind::dendrite, 3.0/2.0, 3.0/2.0, 200);
+    dend->set_compartments(2000);
 
     auto hh = arb::mechanism_desc("hh");
-    hh.set("ena", 50);
-    hh.set("ek", -77);
+    hh.set("ena", params.hh_ena);
+    hh.set("ek", params.hh_ek);
+    hh.set("gnabar", params.hh_gnabar);
+    hh.set("gkbar", params.hh_gkbar);
+    hh.set("gl", params.hh_gl);
+
     soma->add_mechanism(hh);
+    //dend->add_mechanism(hh);
 
-    auto expsyn = arb::mechanism_desc("exp2syn");
-    expsyn.set("tau1", 0.5);
-    expsyn.set("tau2", 1.5);
-    expsyn.set("e", 0);
+    auto exp2syn = arb::mechanism_desc("exp2syn");
+    exp2syn.set("tau1", params.tau1_syn);
+    exp2syn.set("tau2", params.tau2_syn);
+    exp2syn.set("e", params.e_syn);
 
-    cell.add_synapse({0, 0.5}, expsyn);
+    cell.add_synapse({params.syn_seg, params.syn_loc}, exp2syn);
+    std::cout << params.syn_seg << " " << params.syn_loc << std::endl;
+
     return cell;
 }
 
