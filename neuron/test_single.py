@@ -32,6 +32,10 @@ syn.e = in_param["e_syn"]
 
 if in_param["soma_mech"] :
     cell.soma.insert(in_param["mech"])
+    print cell.soma.ek
+    print cell.soma.ncao
+    if in_param["mech"] == "borgka":
+        cell.soma.gkabar_borgka = in_param["gkabar"]
 else :
     cell.soma.insert("pas")
     cell.soma.e_pas = in_param["pas_e"]
@@ -39,6 +43,8 @@ else :
 
 if in_param["dend_mech"] :
     cell.dend.insert(in_param["mech"])
+    if in_param["mech"] == "borgka":
+        cell.soma.gkabar_borgka = in_param["gkabar"]
 else :
     cell.dend.insert("pas")
     cell.dend.e_pas = in_param["pas_e"]

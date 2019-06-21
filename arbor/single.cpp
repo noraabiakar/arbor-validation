@@ -51,6 +51,10 @@ public:
         cell_gprop_.default_parameters = arb::neuron_parameter_defaults;
         cell_gprop_.default_parameters.temperature_K = params_.temp + 273.15;
         cell_gprop_.default_parameters.init_membrane_potential = params_.v_init;
+
+        if (params.mech == "borgka" || params.mech == "cagk") {
+            cell_gprop_.default_parameters.ion_data["k"].init_reversal_potential = -77.0;
+        }
     }
 
     cell_size_type num_cells() const override {
@@ -165,10 +169,30 @@ int main(int argc, char** argv) {
         auto params = read_params(argc, argv);
         soma_recipe recipe(params);
 
-        if(params.mech == "ccanl") {
+        if(params.mech == "cagk" || params.mech == "ccanl") {
+            recipe.add_ion("nca", 2, 1, 2.0/3, 0);
+            recipe.add_ion("lca", 2, 1, 2.0/3, 0);
+            recipe.add_ion("tca", 2, 1, 2.0/3, 0);
+        }
+        else if(params.mech == "cat") {
+            recipe.add_ion("tca", 2, 0, 2.0/3, 0);
+        }
+        else if(params.mech == "lca") {
+            recipe.add_ion("lca", 2, 0, 2.0/3, 0);
+        }
+        else if(params.mech == "nca") {
+            recipe.add_ion("nca", 2, 0, 2.0/3, 0);
+        }
+        else if(params.mech == "gskch") {
             recipe.add_ion("nca", 2, 0, 2.0/3, 0);
             recipe.add_ion("lca", 2, 0, 2.0/3, 0);
             recipe.add_ion("tca", 2, 0, 2.0/3, 0);
+            recipe.add_ion("sk", 1, 0, 2.0/3, 0);
+        }
+        if(params.mech == "ichan2") {
+            recipe.add_ion("nat", 1, 0, 2.0/3, 0);
+            recipe.add_ion("kf", 1, 0, 2.0/3, 0);
+            recipe.add_ion("ks", 1, 0, 2.0/3, 0);
         }
 
         auto decomp = arb::partition_load_balance(recipe, context);
@@ -272,7 +296,9 @@ arb::cable_cell single_cell(const single_params& params) {
 
     if (params.soma_mech) {
         auto mech = arb::mechanism_desc(params.mech);
-
+        if (params.mech == "borgka") {
+            mech.set("gkabar", params.gkabar);
+        }
         soma->add_mechanism(mech);
 
         if (params.mech == "ccanl") {
@@ -291,6 +317,14 @@ arb::cable_cell single_cell(const single_params& params) {
 
     if (params.dend_mech) {
         auto mech = arb::mechanism_desc(params.mech);
+        if (params.mech == "borgka") {
+            mech.set("gkabar", params.gkabar);
+        }
+        if (params.mech == "ccanl") {
+            cell.default_parameters.reversal_potential_method["nca"] = "ccanlrev";
+            cell.default_parameters.reversal_potential_method["lca"] = "ccanlrev";
+            cell.default_parameters.reversal_potential_method["tca"] = "ccanlrev";
+        }
 
         dend->add_mechanism(mech);
     } else {
