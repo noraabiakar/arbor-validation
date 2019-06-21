@@ -15,9 +15,6 @@ proc init() {
     soma.nseg = 1
     dend.nseg = 2000
 
-    dend.Ra = 100
-    soma.Ra = 100
-
     define_shape()
 }
 endtemplate Cell

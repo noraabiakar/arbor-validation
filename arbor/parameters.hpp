@@ -18,7 +18,8 @@ struct single_params {
     unsigned syn_seg;
     double syn_loc;
     double dt, weight;
-    bool soma_hh, dend_hh;
+    bool soma_mech, dend_mech;
+    std::string mech;
 };
 
 single_params read_params(int argc, char** argv) {
@@ -60,8 +61,9 @@ single_params read_params(int argc, char** argv) {
     param_from_json(p.syn_seg, "syn_seg", json);
     param_from_json(p.syn_loc, "syn_loc", json);
     param_from_json(p.weight, "weight", json);
-    param_from_json(p.soma_hh, "soma_hh", json);
-    param_from_json(p.dend_hh, "dend_hh", json);
+    param_from_json(p.soma_mech, "soma_mech", json);
+    param_from_json(p.dend_mech, "dend_mech", json);
+    param_from_json(p.mech, "mech", json);
 
     for (auto it=json.begin(); it!=json.end(); ++it) {
         std::cout << "  Warning: unused input parameter: \"" << it.key() << "\"\n";

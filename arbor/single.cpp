@@ -45,7 +45,13 @@ arb::cable_cell single_cell(const single_params& params);
 
 class soma_recipe: public arb::recipe {
 public:
-    soma_recipe(single_params params): num_cells_(1), params_(params), event_weight_(params.weight) {}
+    soma_recipe(single_params params):
+      num_cells_(1), params_(params), event_weight_(params.weight), catalogue_(arb::global_default_catalogue()) {
+        cell_gprop_.catalogue = &catalogue_;
+        cell_gprop_.default_parameters = arb::neuron_parameter_defaults;
+        cell_gprop_.default_parameters.temperature_K = params_.temp + 273.15;
+        cell_gprop_.default_parameters.init_membrane_potential = params_.v_init;
+    }
 
     cell_size_type num_cells() const override {
         return num_cells_;
@@ -102,16 +108,21 @@ public:
     }
 
     arb::util::any get_global_properties(cell_kind k) const override {
-        arb::cable_cell_global_properties a;
-        a.temperature_K = params_.temp + 273.15;
-        a.init_membrane_potential_mV = params_.v_init;
-        return a;
+        return cell_gprop_;
     }
+
+    void add_ion(const std::string& ion_name, int charge, double init_iconc, double init_econc, double init_revpot) {
+        cell_gprop_.add_ion(ion_name, charge, init_iconc, init_econc, init_revpot);
+    }
+
 
 private:
     cell_size_type num_cells_;
     single_params params_;
     float event_weight_;
+
+    arb::cable_cell_global_properties cell_gprop_;
+    arb::mechanism_catalogue catalogue_;
 };
 
 
@@ -153,6 +164,12 @@ int main(int argc, char** argv) {
         // Create an instance of our recipe.
         auto params = read_params(argc, argv);
         soma_recipe recipe(params);
+
+        if(params.mech == "ccanl") {
+            recipe.add_ion("nca", 2, 0, 2.0/3, 0);
+            recipe.add_ion("lca", 2, 0, 2.0/3, 0);
+            recipe.add_ion("tca", 2, 0, 2.0/3, 0);
+        }
 
         auto decomp = arb::partition_load_balance(recipe, context);
 
@@ -253,15 +270,17 @@ arb::cable_cell single_cell(const single_params& params) {
     auto dend = cell.add_cable(0, arb::section_kind::dendrite, 30.0/2.0, 30.0/2.0, 200);
     dend->set_compartments(2000);
 
-    if (params.soma_hh) {
-        auto hh = arb::mechanism_desc("hh");
-        hh.set("ena", params.hh_ena);
-        hh.set("ek", params.hh_ek);
-        hh.set("gnabar", params.hh_gnabar);
-        hh.set("gkbar", params.hh_gkbar);
-        hh.set("gl", params.hh_gl);
+    if (params.soma_mech) {
+        auto mech = arb::mechanism_desc(params.mech);
 
-        soma->add_mechanism(hh);
+        soma->add_mechanism(mech);
+
+        if (params.mech == "ccanl") {
+            cell.default_parameters.reversal_potential_method["nca"] = "ccanlrev";
+            cell.default_parameters.reversal_potential_method["lca"] = "ccanlrev";
+            cell.default_parameters.reversal_potential_method["tca"] = "ccanlrev";
+        }
+
     } else {
         auto pas = arb::mechanism_desc("pas");
         pas.set("g", params.pas_g);
@@ -270,15 +289,10 @@ arb::cable_cell single_cell(const single_params& params) {
         soma->add_mechanism(pas);
     }
 
-    if (params.dend_hh) {
-        auto hh = arb::mechanism_desc("hh");
-        hh.set("ena", params.hh_ena);
-        hh.set("ek", params.hh_ek);
-        hh.set("gnabar", params.hh_gnabar);
-        hh.set("gkbar", params.hh_gkbar);
-        hh.set("gl", params.hh_gl);
+    if (params.dend_mech) {
+        auto mech = arb::mechanism_desc(params.mech);
 
-        dend->add_mechanism(hh);
+        dend->add_mechanism(mech);
     } else {
         auto pas = arb::mechanism_desc("pas");
         pas.set("g", params.pas_g);
