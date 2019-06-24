@@ -25,7 +25,6 @@ NEURON {
     RANGE  gnatbar, gkfbar, gksbar
     RANGE  gl, el
     RANGE  minf, mtau, hinf, htau, nfinf, nftau, nsinf, nstau
-    GLOBAL q10
 }
  
 PARAMETER {
@@ -58,8 +57,7 @@ ASSIGNED {
     nftau (ms)
     nstau (ms)
 
-    q10
-} 
+}
 
 : currents
 BREAKPOINT {
@@ -97,8 +95,6 @@ DERIVATIVE states {
 : rates
 PROCEDURE rates(v, celsius) {
     LOCAL  alpha, beta, sum
-
-    q10   = 3^((celsius - 6.3)/10)
 
     alpha = -0.3 * vtrap((v+60-17),-5)
     beta  =  0.3 * vtrap((v+60-45), 5)

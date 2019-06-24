@@ -1,9 +1,9 @@
-TITLE ichan2.mod  
- 
+TITLE ichan2.mod
+
 COMMENT
-konduktivitas valtozas hatasa- somaban 
+konduktivitas valtozas hatasa- somaban
 ENDCOMMENT
- 
+
 UNITS {
 	(mA) =(milliamp)
 	(mV) =(millivolt)
@@ -13,42 +13,42 @@ UNITS {
 	(mM) = (millimolar)
 	(um) = (micron)
 }
- 
-? interface 
-NEURON { 
+
+? interface
+NEURON {
     THREADSAFE
-	SUFFIX ichan2 
+	SUFFIX ichan2
 	USEION nat READ enat WRITE inat VALENCE 1
 	USEION kf READ ekf WRITE ikf  VALENCE 1
 	USEION ks READ eks WRITE iks  VALENCE 1
-	NONSPECIFIC_CURRENT il 
+	NONSPECIFIC_CURRENT il
 	RANGE  gnat, gkf, gks
 	RANGE gnatbar, gkfbar, gksbar
 	RANGE gl, el
 	RANGE minf, mtau, hinf, htau, nfinf, nftau, inat, ikf, nsinf, nstau, iks
 }
- 
+
 PARAMETER {
-	v (mV) 
+	v (mV)
 	celsius = 6.3 (degC)
-	dt (ms) 
+	dt (ms)
 	enat  (mV)
-	gnatbar (mho/cm2)   
+	gnatbar (mho/cm2)
 	ekf  (mV)
 	gkfbar (mho/cm2)
 	eks  (mV)
 	gksbar (mho/cm2)
-	gl (mho/cm2)    
+	gl (mho/cm2)
  	el (mV)
 }
- 
+
 STATE {
 	m h nf ns
 }
- 
+
 ASSIGNED {
-         
-	gnat (mho/cm2) 
+
+	gnat (mho/cm2)
 	gkf (mho/cm2)
 	gks (mho/cm2)
 
@@ -62,12 +62,12 @@ ASSIGNED {
 	minf hinf nfinf nsinf
  	mtau (ms) htau (ms) nftau (ms) nstau (ms)
 	mexp hexp nfexp nsexp
-} 
+}
 
 ? currents
 BREAKPOINT {
 	SOLVE states METHOD cnexp
-	gnat = gnatbar*m*m*m*h  
+	gnat = gnatbar*m*m*m*h
 	inat = gnat*(v - enat)
 	gkf = gkfbar*nf*nf*nf*nf
 	ikf = gkf*(v-ekf)
@@ -76,9 +76,9 @@ BREAKPOINT {
 
 	il = gl*(v-el)
 }
- 
+
 UNITSOFF
- 
+
 INITIAL {
 	trates(v)
 	m = minf
@@ -88,14 +88,14 @@ INITIAL {
 }
 
 ? states
-DERIVATIVE states {	:Computes state variables m, h, and n 
+DERIVATIVE states {	:Computes state variables m, h, and n
 	trates(v)	:      at the current v and dt.
 	m' = (minf - m)/mtau
 	h' = (hinf - h)/htau
 	nf' = (nfinf - nf)/nftau
 	ns' = (nsinf - ns)/nstau
 }
- 
+
 LOCAL q10
 
 ? rates
@@ -113,8 +113,8 @@ PROCEDURE rates(v) {  :Computes rate and other constants at current v.
 	alpha = 0.23/exp((v+60+5)/20)
 	beta = 3.33/(1+exp((v+60-47.5)/-10))
 	sum = alpha+beta
-	htau = 1/sum 
-	hinf = alpha/sum 
+	htau = 1/sum
+	hinf = alpha/sum
              :"ns" sKDR activation system
 	alpha = -0.028*vtrap((v+65-35),-6)
 	beta = 0.1056/exp((v+65-10)/40)
@@ -124,18 +124,18 @@ PROCEDURE rates(v) {  :Computes rate and other constants at current v.
             :"nf" fKDR activation system
 	alpha = -0.07*vtrap((v+65-47),-6)
 	beta = 0.264/exp((v+65-22)/40)
-	sum = alpha+beta        
+	sum = alpha+beta
 	nftau = 1/sum
 	nfinf = alpha/sum
-	
+
 }
- 
+
 PROCEDURE trates(v) {  :Computes rate and other constants at current v.
                       :Call once from HOC to initialize inf at resting v.
 	LOCAL tinc
 	TABLE minf, mexp, hinf, hexp, nfinf, nfexp, nsinf, nsexp, mtau, htau, nftau, nstau
 	DEPEND dt, celsius FROM -100 TO 100 WITH 200
-                           
+
 	rates(v)	: not consistently executed from here if usetable_hh == 1
 		: so don't expect the tau values to be tracking along with
 		: the inf values in hoc
@@ -146,14 +146,14 @@ PROCEDURE trates(v) {  :Computes rate and other constants at current v.
 	nfexp = 1 - exp(tinc/nftau)
 	nsexp = 1 - exp(tinc/nstau)
 }
- 
+
 FUNCTION vtrap(x,y) {  :Traps for 0 in denominator of rate eqns.
 	if (fabs(x/y) < 1e-6) {
 		vtrap = y*(1 - x/y/2)
-	}else{  
+	}else{
 		vtrap = x/(exp(x/y) - 1)
 	}
 }
- 
+
 UNITSON
 

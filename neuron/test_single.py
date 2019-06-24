@@ -61,14 +61,14 @@ else :
     cell.soma.e_pas = in_param["pas_e"]
     cell.soma.g_pas = in_param["pas_g"]
 
-if in_param["dend_mech"] :
-    cell.dend.insert(in_param["mech"])
-    if in_param["mech"] == "borgka":
-        cell.soma.gkabar_borgka = in_param["gkabar"]
-else :
-    cell.dend.insert("pas")
-    cell.dend.e_pas = in_param["pas_e"]
-    cell.dend.g_pas = in_param["pas_g"]
+# if in_param["dend_mech"] :
+#     cell.dend.insert(in_param["mech"])
+#     if in_param["mech"] == "borgka":
+#         cell.soma.gkabar_borgka = in_param["gkabar"]
+# else :
+#     cell.dend.insert("pas")
+#     cell.dend.e_pas = in_param["pas_e"]
+#     cell.dend.g_pas = in_param["pas_g"]
 
 ################################
 # Create spike times for input #
