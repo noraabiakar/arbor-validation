@@ -32,10 +32,17 @@ syn.e = in_param["e_syn"]
 
 if in_param["soma_mech"] :
     cell.soma.insert(in_param["mech"])
-    print cell.soma.ek
-    print cell.soma.ncao
     if in_param["mech"] == "borgka":
         cell.soma.gkabar_borgka = in_param["gkabar"]
+    else :
+        if in_param["mech"] == "cat":
+            cell.soma.gcatbar_cat = in_param["gcatbar"]
+        else :
+            if in_param["mech"] == "gskch":
+                cell.soma.ncai = 15e-6;
+                cell.soma.lcai = 15e-6;
+                cell.soma.tcai = 15e-6;
+                cell.soma.gskbar_gskch = in_param["gskbar"]
 else :
     cell.soma.insert("pas")
     cell.soma.e_pas = in_param["pas_e"]

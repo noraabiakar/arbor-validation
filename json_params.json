@@ -1,5 +1,5 @@
 {
-    "dt_arbor": 0.0025,
+    "dt_arbor": 0.025,
     "dt_neuron": 0.025,
     "temp": 35.0,
     "vinit": -70.0,
@@ -13,7 +13,9 @@
     "pas_g": 0.001,
     "soma_mech": true,
     "dend_mech": false,
-    "mech": "cagk",
-    "gkabar": 10
+    "mech": "gskch",
+    "gkabar": 10,
+    "gcatbar": 0.3,
+    "gskbar": 1000000
 }
 

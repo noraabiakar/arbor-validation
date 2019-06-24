@@ -55,6 +55,11 @@ public:
         if (params.mech == "borgka" || params.mech == "cagk") {
             cell_gprop_.default_parameters.ion_data["k"].init_reversal_potential = -77.0;
         }
+        else if (params.mech == "cat") {
+            cell_gprop_.default_parameters.ion_data["ca"].init_reversal_potential = 132.457934164;
+            cell_gprop_.default_parameters.ion_data["ca"].init_int_concentration = 5e-5;
+            cell_gprop_.default_parameters.ion_data["ca"].init_ext_concentration = 2;
+        }
     }
 
     cell_size_type num_cells() const override {
@@ -175,7 +180,7 @@ int main(int argc, char** argv) {
             recipe.add_ion("tca", 2, 1, 2.0/3, 0);
         }
         else if(params.mech == "cat") {
-            recipe.add_ion("tca", 2, 0, 2.0/3, 0);
+            recipe.add_ion("tca", 2, 1.0, 1.0, 0);
         }
         else if(params.mech == "lca") {
             recipe.add_ion("lca", 2, 0, 2.0/3, 0);
@@ -184,10 +189,10 @@ int main(int argc, char** argv) {
             recipe.add_ion("nca", 2, 0, 2.0/3, 0);
         }
         else if(params.mech == "gskch") {
-            recipe.add_ion("nca", 2, 0, 2.0/3, 0);
-            recipe.add_ion("lca", 2, 0, 2.0/3, 0);
-            recipe.add_ion("tca", 2, 0, 2.0/3, 0);
-            recipe.add_ion("sk", 1, 0, 2.0/3, 0);
+            recipe.add_ion("nca", 2, 1.5e-5, 1.0, 0);
+            recipe.add_ion("lca", 2, 1.5e-5, 1.0, 0);
+            recipe.add_ion("tca", 2, 1.5e-5, 1.0, 0);
+            recipe.add_ion("sk",  1, 1.5e-5, 1.0, 0);
         }
         if(params.mech == "ichan2") {
             recipe.add_ion("nat", 1, 0, 2.0/3, 0);
@@ -206,7 +211,7 @@ int main(int argc, char** argv) {
         auto probe_id = cell_member_type{0, 0};
 
         // The schedule for sampling is 10 samples every 1 ms.
-        auto sched = arb::regular_schedule(0.001);
+        auto sched = arb::regular_schedule(0.025);
 
         // This is where the voltage samples will be stored as (time, value) pairs
         arb::trace_data<double> voltage;
@@ -298,6 +303,10 @@ arb::cable_cell single_cell(const single_params& params) {
         auto mech = arb::mechanism_desc(params.mech);
         if (params.mech == "borgka") {
             mech.set("gkabar", params.gkabar);
+        } else if (params.mech == "cat") {
+            mech.set("gcatbar", params.gcatbar);
+        } else if (params.mech == "gskch") {
+            mech.set("gskbar", params.gskbar);
         }
         soma->add_mechanism(mech);
 
@@ -319,14 +328,17 @@ arb::cable_cell single_cell(const single_params& params) {
         auto mech = arb::mechanism_desc(params.mech);
         if (params.mech == "borgka") {
             mech.set("gkabar", params.gkabar);
+        } else if (params.mech == "cat") {
+            mech.set("gcatbar", params.gcatbar);
         }
+        dend->add_mechanism(mech);
+
         if (params.mech == "ccanl") {
             cell.default_parameters.reversal_potential_method["nca"] = "ccanlrev";
             cell.default_parameters.reversal_potential_method["lca"] = "ccanlrev";
             cell.default_parameters.reversal_potential_method["tca"] = "ccanlrev";
         }
 
-        dend->add_mechanism(mech);
     } else {
         auto pas = arb::mechanism_desc("pas");
         pas.set("g", params.pas_g);
