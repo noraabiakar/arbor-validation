@@ -26,7 +26,6 @@ NEURON {
 PARAMETER {
     v (mV)
     celsius = 6.3 (degC)
-    dt (ms)
     gncabar (mho/cm2)
 }
  
@@ -84,16 +83,8 @@ PROCEDURE rates(v, celsius) {  :Computes rate and other constants at current v.
     dinf = alpha/sum
 }
  
-PROCEDURE trates(v, celsius) {  :Computes rate and other constants at current v.
-                      :Call once from HOC to initialize inf at resting v.
-    LOCAL tinc
-
-    rates(v, celsius)	: not consistently executed from here if usetable_hh == 1
-                        : so don't expect the tau values to be tracking along with
-                        : the inf values in hoc
-    tinc = -dt * q10
-    cexp = 1 - exp(tinc/ctau)
-    dexp = 1 - exp(tinc/dtau)
+PROCEDURE trates(v, celsius) {
+    rates(v, celsius)
 }
  
 FUNCTION vtrap(x,y) {  :Traps for 0 in denominator of rate eqns.

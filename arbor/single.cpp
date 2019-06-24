@@ -60,6 +60,10 @@ public:
             cell_gprop_.default_parameters.ion_data["ca"].init_int_concentration = 5e-5;
             cell_gprop_.default_parameters.ion_data["ca"].init_ext_concentration = 2;
         }
+        else if (params.mech == "lca") {
+            cell_gprop_.default_parameters.ion_data["ca"].init_int_concentration = 5e-5;
+            cell_gprop_.default_parameters.ion_data["ca"].init_ext_concentration = 2;
+        }
     }
 
     cell_size_type num_cells() const override {
@@ -183,10 +187,10 @@ int main(int argc, char** argv) {
             recipe.add_ion("tca", 2, 1.0, 1.0, 0);
         }
         else if(params.mech == "lca") {
-            recipe.add_ion("lca", 2, 0, 2.0/3, 0);
+            recipe.add_ion("lca", 2, 1.0, 1.0, 0);
         }
         else if(params.mech == "nca") {
-            recipe.add_ion("nca", 2, 0, 2.0/3, 0);
+            recipe.add_ion("nca", 2, 1.0, 1.0, 0);
         }
         else if(params.mech == "gskch") {
             recipe.add_ion("nca", 2, 1.5e-5, 1.0, 0);
@@ -195,9 +199,9 @@ int main(int argc, char** argv) {
             recipe.add_ion("sk",  1, 1.5e-5, 1.0, 0);
         }
         if(params.mech == "ichan2") {
-            recipe.add_ion("nat", 1, 0, 2.0/3, 0);
-            recipe.add_ion("kf", 1, 0, 2.0/3, 0);
-            recipe.add_ion("ks", 1, 0, 2.0/3, 0);
+            recipe.add_ion("nat", 1, 1.0, 1.0, 0);
+            recipe.add_ion("kf", 1, 1.0, 1.0, 0);
+            recipe.add_ion("ks", 1, 1.0, 1.0, 0);
         }
 
         auto decomp = arb::partition_load_balance(recipe, context);
@@ -307,6 +311,16 @@ arb::cable_cell single_cell(const single_params& params) {
             mech.set("gcatbar", params.gcatbar);
         } else if (params.mech == "gskch") {
             mech.set("gskbar", params.gskbar);
+        } else if (params.mech == "ichan2") {
+            mech.set("gnatbar", params.gnatbar);
+            mech.set("gkfbar", params.gkfbar);
+            mech.set("gksbar", params.gksbar);
+            mech.set("gl", params.gl);
+            mech.set("el", params.el);
+        } else if (params.mech == "lca") {
+            mech.set("glcabar", params.glcabar);
+        } else if (params.mech == "nca") {
+            mech.set("gncabar", params.gncabar);
         }
         soma->add_mechanism(mech);
 

@@ -106,7 +106,7 @@ PROCEDURE rates(v) {  :Computes rate and other constants at current v.
                 :"m" sodium activation system - act and inact cross at -40
 	alpha = -0.3*vtrap((v+60-17),-5)
 	beta = 0.3*vtrap((v+60-45),5)
-	sum = alpha+beta        
+	sum = alpha+beta
 	mtau = 1/sum
 	minf = alpha/sum
                 :"h" sodium inactivation system
@@ -118,7 +118,7 @@ PROCEDURE rates(v) {  :Computes rate and other constants at current v.
              :"ns" sKDR activation system
 	alpha = -0.028*vtrap((v+65-35),-6)
 	beta = 0.1056/exp((v+65-10)/40)
-	sum = alpha+beta        
+	sum = alpha+beta
 	nstau = 1/sum
 	nsinf = alpha/sum
             :"nf" fKDR activation system

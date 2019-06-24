@@ -43,6 +43,19 @@ if in_param["soma_mech"] :
                 cell.soma.lcai = 15e-6;
                 cell.soma.tcai = 15e-6;
                 cell.soma.gskbar_gskch = in_param["gskbar"]
+            else :
+                if in_param["mech"] == "ichan2":
+                    cell.soma.gnatbar_ichan2 = in_param["gnatbar"]
+                    cell.soma.gkfbar_ichan2 = in_param["gkfbar"]
+                    cell.soma.gksbar_ichan2 = in_param["gksbar"]
+                    cell.soma.gl_ichan2 = in_param["gl"]
+                    cell.soma.el_ichan2 = in_param["el"]
+                else:
+                    if in_param["mech"] == "lca":
+                        cell.soma.glcabar_lca = in_param["glcabar"]
+                    else:
+                        if in_param["mech"] == "nca":
+                            cell.soma.gncabar_nca = in_param["gncabar"]
 else :
     cell.soma.insert("pas")
     cell.soma.e_pas = in_param["pas_e"]

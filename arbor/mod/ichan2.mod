@@ -30,12 +30,11 @@ NEURON {
  
 PARAMETER {
     v       (mV)
-    dt      (ms)
-    gnatbar (mho/cm2)
-    gkfbar  (mho/cm2)
-    gksbar  (mho/cm2)
-    gl      (mho/cm2)
-    el      (mV)
+    gnatbar=0 (mho/cm2)
+    gkfbar=0  (mho/cm2)
+    gksbar=0  (mho/cm2)
+    gl=0      (mho/cm2)
+    el=0      (mV)
 
     celsius = 6.3 (degC)
 }
@@ -58,11 +57,6 @@ ASSIGNED {
     htau  (ms)
     nftau (ms)
     nstau (ms)
-
-    mexp
-    hexp
-    nfexp
-    nsexp
 
     q10
 } 
@@ -132,17 +126,8 @@ PROCEDURE rates(v, celsius) {
 
 }
  
-PROCEDURE trates(v, celsius) {  :Computes rate and other constants at current v.
-                      :Call once from HOC to initialize inf at resting v.
-    LOCAL tinc
-
+PROCEDURE trates(v, celsius) {
     rates(v, celsius)
-
-    tinc  = -dt * q10
-    mexp  = 1 - exp(tinc/mtau)
-    hexp  = 1 - exp(tinc/htau)
-    nfexp = 1 - exp(tinc/nftau)
-    nsexp = 1 - exp(tinc/nstau)
 }
  
 FUNCTION vtrap(x,y) {  :Traps for 0 in denominator of rate eqns.

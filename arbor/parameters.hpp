@@ -13,7 +13,7 @@ std::vector<double> read_spike_times();
 struct single_params {
     double temp, v_init;
     double tau1_syn, tau2_syn, e_syn;
-    double gkabar, gcatbar, gskbar;
+    double gkabar, gcatbar, gskbar, gnatbar, gkfbar, gksbar, gl, el, glcabar, gncabar;
     double pas_e, pas_g;
     unsigned syn_seg;
     double syn_loc;
@@ -54,6 +54,13 @@ single_params read_params(int argc, char** argv) {
     param_from_json(p.gkabar, "gkabar", json);
     param_from_json(p.gcatbar, "gcatbar", json);
     param_from_json(p.gskbar, "gskbar", json);
+    param_from_json(p.gnatbar, "gnatbar", json);
+    param_from_json(p.gkfbar, "gkfbar", json);
+    param_from_json(p.gksbar, "gksbar", json);
+    param_from_json(p.gl, "gl", json);
+    param_from_json(p.el, "el", json);
+    param_from_json(p.glcabar, "glcabar", json);
+    param_from_json(p.gncabar, "gncabar", json);
     param_from_json(p.pas_e, "pas_e", json);
     param_from_json(p.pas_g, "pas_g", json);
     param_from_json(p.syn_seg, "syn_seg", json);
