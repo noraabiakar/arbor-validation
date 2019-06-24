@@ -300,8 +300,8 @@ arb::cable_cell single_cell(const single_params& params) {
     // Add soma.
     auto soma = cell.add_soma(11.65968/2.0);
 
-    //auto dend = cell.add_cable(0, arb::section_kind::dendrite, 30.0/2.0, 30.0/2.0, 200);
-    //dend->set_compartments(2000);
+    auto dend = cell.add_cable(0, arb::section_kind::dendrite, 30.0/2.0, 30.0/2.0, 200);
+    dend->set_compartments(2000);
 
     if (params.soma_mech) {
         auto mech = arb::mechanism_desc(params.mech);
@@ -338,7 +338,7 @@ arb::cable_cell single_cell(const single_params& params) {
         soma->add_mechanism(pas);
     }
 
-    /*if (params.dend_mech) {
+    if (params.dend_mech) {
         auto mech = arb::mechanism_desc(params.mech);
         if (params.mech == "borgka") {
             mech.set("gkabar", params.gkabar);
@@ -359,7 +359,7 @@ arb::cable_cell single_cell(const single_params& params) {
         pas.set("e", params.pas_e);
 
         dend->add_mechanism(pas);
-    }*/
+    }
 
     auto exp2syn = arb::mechanism_desc("exp2syn");
     exp2syn.set("tau1", params.tau1_syn);
