@@ -59,6 +59,10 @@ if in_param["soma_mech"] :
                         else:
                             if in_param["mech"] == "nca":
                                 cell.soma.gncabar_nca = in_param["gncabar"]
+                            else :
+                                if in_param["mech"] == "ccanl":
+                                    cell.soma.catau_ccanl = in_param["catau"]
+                                    cell.soma.caiinf_ccanl = in_param["caiinf"]
 else :
     cell.soma.insert("pas")
     cell.soma.e_pas = in_param["pas_e"]
@@ -93,6 +97,10 @@ if in_param["dend_mech"] :
                         else:
                             if in_param["mech"] == "nca":
                                 cell.dend.gncabar_nca = in_param["gncabar"]
+                            else :
+                                if in_param["mech"] == "ccanl":
+                                    cell.dend.catau_ccanl = in_param["catau"]
+                                    cell.dend.caiinf_ccanl = in_param["caiinf"]
 else :
     cell.dend.insert("pas")
     cell.dend.e_pas = in_param["pas_e"]
@@ -106,30 +114,14 @@ frequency = 5 # units: Hz
 
 vecstims = h.VecStim()
 evecs = h.Vector()
-vec = []
 
 intervals = []
-mu = 1000./frequency # Convert to ms
-elapsed_time = 0
-flag = 1
-while flag:
-    roll = np.random.uniform(0,1)
-    interval = -mu*np.log(roll)
-        
-    intervals.append(interval)
-    elapsed_time += interval
-        
-    if elapsed_time > tstop:
-        flag = 0
-        spikes = np.cumsum(intervals)[:-1]
-        for spike in spikes:
-            evecs.append(spike)
-            vec.append(spike)
-           
-        vecstims.play(evecs)
 
-for v in vec:
-    print v
+for spike in in_param["spikes"]:
+    if spike > tstop:
+        break
+    evecs.append(spike)
+vecstims.play(evecs)
 
 #####################
 # Connecting inputs #

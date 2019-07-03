@@ -93,13 +93,7 @@ public:
         std::vector<arb::event_generator> gens;
         arb::pse_vector svec;
 
-        std::vector<double> spikes = {
-                25.269724183039855, 29.37076391451496,
-                58.472477010286546, 93.80268485203328,
-                112.71090127018375, 142.6472406502223
-        };
-
-        for (auto s: spikes) {
+        for (auto s: params_.spikes) {
             svec.push_back({{gid, 0}, s, event_weight_});
         }
         gens.push_back(arb::explicit_generator(svec));
@@ -324,7 +318,11 @@ arb::cable_cell single_cell(const single_params& params) {
             mech.set("glcabar", params.glcabar);
         } else if (params.mech == "nca") {
             mech.set("gncabar", params.gncabar);
+        } else if (params.mech == "ccanl") {
+            mech.set("catau", params.catau);
+            mech.set("caiinf", params.caiinf);
         }
+
         soma->add_mechanism(mech);
 
         if (params.mech == "ccanl") {
@@ -361,6 +359,9 @@ arb::cable_cell single_cell(const single_params& params) {
             mech.set("glcabar", params.glcabar);
         } else if (params.mech == "nca") {
             mech.set("gncabar", params.gncabar);
+        } else if (params.mech == "ccanl") {
+            mech.set("catau", params.catau);
+            mech.set("caiinf", params.caiinf);
         }
         dend->add_mechanism(mech);
 

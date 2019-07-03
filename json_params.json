@@ -13,7 +13,7 @@
     "pas_g": 0.001,
     "soma_mech": true,
     "dend_mech": false,
-    "mech": "nca",
+    "mech": "ccanl",
     "gkabar": 20,
 
     "gkbar": 1,
@@ -30,6 +30,13 @@
 
     "glcabar": 0.01,
 
-    "gncabar": 0.1
+    "gncabar": 0.1,
+
+    "catau": 9,
+    "caiinf": 50e-6,
+
+    "spikes" : [
+        25.269724183039855
+    ]
 }
 
