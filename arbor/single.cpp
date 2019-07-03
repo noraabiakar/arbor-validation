@@ -265,6 +265,17 @@ arb::cable_cell single_cell(const single_params& params) {
 
     // Add soma.
     auto soma = cell.add_soma(11.65968/2.0);
+    auto dend = cell.add_cable(0, arb::section_kind::dendrite, 1.165968/2.0, 1.165968/2.0, 100);
+    dend->set_compartments(100);
+
+    auto pas = arb::mechanism_desc("pas");
+    pas.set("g", params.pas_g);
+    pas.set("e", params.pas_e);
+
+    dend->add_mechanism(pas);
+    dend->parameters.membrane_capacitance = params.cm/100;
+    dend->parameters.axial_resistivity = params.ra;
+
 
     cell.default_parameters.reversal_potential_method["nca"] = "ccanlrev";
     cell.default_parameters.reversal_potential_method["lca"] = "ccanlrev";
