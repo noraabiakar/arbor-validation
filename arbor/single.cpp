@@ -52,18 +52,8 @@ public:
         cell_gprop_.default_parameters.temperature_K = params_.temp + 273.15;
         cell_gprop_.default_parameters.init_membrane_potential = params_.v_init;
 
-        if (params.mech == "borgka" || params.mech == "cagk") {
-            cell_gprop_.default_parameters.ion_data["k"].init_reversal_potential = -77.0;
-        }
-        else if (params.mech == "cat") {
-            cell_gprop_.default_parameters.ion_data["ca"].init_reversal_potential = 132.457934164;
-            cell_gprop_.default_parameters.ion_data["ca"].init_int_concentration = 5e-5;
-            cell_gprop_.default_parameters.ion_data["ca"].init_ext_concentration = 2;
-        }
-        else if (params.mech == "lca") {
-            cell_gprop_.default_parameters.ion_data["ca"].init_int_concentration = 5e-5;
-            cell_gprop_.default_parameters.ion_data["ca"].init_ext_concentration = 2;
-        }
+        cell_gprop_.default_parameters.ion_data["k"].init_reversal_potential = params_.ek;
+        cell_gprop_.default_parameters.ion_data["ca"].init_ext_concentration = params_.cao;
     }
 
     cell_size_type num_cells() const override {
@@ -172,31 +162,13 @@ int main(int argc, char** argv) {
         auto params = read_params(argc, argv);
         soma_recipe recipe(params);
 
-        if(params.mech == "cagk" || params.mech == "ccanl") {
-            recipe.add_ion("nca", 2, 1.0, 1.0, 0);
-            recipe.add_ion("lca", 2, 1.0, 1.0, 0);
-            recipe.add_ion("tca", 2, 1.0, 1.0, 0);
-        }
-        else if(params.mech == "cat") {
-            recipe.add_ion("tca", 2, 1.0, 1.0, 0);
-        }
-        else if(params.mech == "lca") {
-            recipe.add_ion("lca", 2, 1.0, 1.0, 0);
-        }
-        else if(params.mech == "nca") {
-            recipe.add_ion("nca", 2, 1.0, 1.0, 0);
-        }
-        else if(params.mech == "gskch") {
-            recipe.add_ion("nca", 2, 1.5e-5, 1.0, 0);
-            recipe.add_ion("lca", 2, 1.5e-5, 1.0, 0);
-            recipe.add_ion("tca", 2, 1.5e-5, 1.0, 0);
-            recipe.add_ion("sk",  1, 1.5e-5, 1.0, 0);
-        }
-        if(params.mech == "ichan2") {
-            recipe.add_ion("nat", 1, 1.0, 1.0, 0);
-            recipe.add_ion("kf", 1, 1.0, 1.0, 0);
-            recipe.add_ion("ks", 1, 1.0, 1.0, 0);
-        }
+        recipe.add_ion("nca", 2, 1.0, 1.0, 0);
+        recipe.add_ion("lca", 2, 1.0, 1.0, params.elca);
+        recipe.add_ion("tca", 2, 1.0, 1.0, params.etca);
+        recipe.add_ion("sk",  1, 1.0, 1.0, params.esk);
+        recipe.add_ion("nat", 1, 1.0, 1.0, params.enat);
+        recipe.add_ion("kf",  1, 1.0, 1.0, params.ekf);
+        recipe.add_ion("ks",  1, 1.0, 1.0, params.eks);
 
         auto decomp = arb::partition_load_balance(recipe, context);
 
@@ -293,91 +265,53 @@ arb::cable_cell single_cell(const single_params& params) {
 
     // Add soma.
     auto soma = cell.add_soma(11.65968/2.0);
-    auto tiny_comp = cell.add_cable(0, arb::section_kind::dendrite, 1.165968/2.0, 1.165968/2.0, 0.01);
+    /*auto tiny_comp = cell.add_cable(0, arb::section_kind::dendrite, 1.165968/2.0, 1.165968/2.0, 0.01);
     tiny_comp->set_compartments(1);
     auto dend = cell.add_cable(1, arb::section_kind::dendrite, 1.165968/2.0, 1.165968/2.0, 100);
-    dend->set_compartments(100);
+    dend->set_compartments(100);*/
 
-    if (params.soma_mech) {
-        auto mech = arb::mechanism_desc(params.mech);
-        if (params.mech == "borgka") {
-            mech.set("gkabar", params.gkabar);
-        } else if (params.mech == "cagk") {
-            mech.set("gkbar", params.gkbar);
-        } else if (params.mech == "cat") {
-            mech.set("gcatbar", params.gcatbar);
-        } else if (params.mech == "gskch") {
-            mech.set("gskbar", params.gskbar);
-        } else if (params.mech == "ichan2") {
-            mech.set("gnatbar", params.gnatbar);
-            mech.set("gkfbar", params.gkfbar);
-            mech.set("gksbar", params.gksbar);
-            mech.set("gl", params.gl);
-            mech.set("el", params.el);
-        } else if (params.mech == "lca") {
-            mech.set("glcabar", params.glcabar);
-        } else if (params.mech == "nca") {
-            mech.set("gncabar", params.gncabar);
-        } else if (params.mech == "ccanl") {
-            mech.set("catau", params.catau);
-            mech.set("caiinf", params.caiinf);
-        }
+    arb::mechanism_desc ichan2("ichan2");
+    arb::mechanism_desc borgka("borgka");
+    arb::mechanism_desc nca("nca");
+    arb::mechanism_desc lca("lca");
+    arb::mechanism_desc cat("cat");
+    arb::mechanism_desc gskch("gskch");
+    arb::mechanism_desc cagk("cagk");
+    arb::mechanism_desc ccanl("ccanl");
 
-        soma->add_mechanism(mech);
+    ichan2["gnatbar"] = 0.120    * params.gnatbar_ichan2;
+    ichan2["gkfbar"]  = 0.016    * params.gkfbar_ichan2;
+    ichan2["gksbar"]  = 0.006    * params.gksbar_ichan2;
+    ichan2["gl"]      = 0.00004  * params.gl_ichan2;
+    ichan2["el"]      =            params.el_ichan2;
+    borgka["gkabar"]  = 0.001    * params.gkabar_borgka;
+    nca["gncabar"]    = 0.001    * params.gncabar_nca;
+    lca["glcabar"]    = 0.005    * params.glcabar_lca;
+    cat["gcatbar"]    = 0.000037 * params.gcatbar_cat;
+    gskch["gskbar"]   = 0.001    * params.gskbar_gskch;
+    cagk["gkbar"]     = 0.0006   * params.gkbar_cagk;
+    ccanl["catau"]    = 10       * params.catau_ccanl;
+    ccanl["caiinf"]   = 5.0e-6   * params.caiinf_ccanl;
 
-        if (params.mech == "ccanl") {
-            cell.default_parameters.reversal_potential_method["nca"] = "ccanlrev";
-            cell.default_parameters.reversal_potential_method["lca"] = "ccanlrev";
-            cell.default_parameters.reversal_potential_method["tca"] = "ccanlrev";
-        }
+    soma->parameters.membrane_capacitance = 1.0 * params.cm_mult/100;
+    soma->parameters.axial_resistivity = params.ra;
 
-    } else {
-        auto pas = arb::mechanism_desc("pas");
-        pas.set("g", params.pas_g);
-        pas.set("e", params.pas_e);
+    soma->add_mechanism(ichan2);
+    soma->add_mechanism(borgka);
+    soma->add_mechanism(nca);
+//    soma->add_mechanism(lca);
+//    soma->add_mechanism(cat);
+//    soma->add_mechanism(gskch);
+//    soma->add_mechanism(cagk);
+//    soma->add_mechanism(ccanl);
 
-        soma->add_mechanism(pas);
-    }
+    /*auto pas = arb::mechanism_desc("pas");
+    pas.set("g", params.pas_g);
+    pas.set("e", params.pas_e);
 
-    if (params.dend_mech) {
-        auto mech = arb::mechanism_desc(params.mech);
-        if (params.mech == "borgka") {
-            mech.set("gkabar", params.gkabar);
-        } else if (params.mech == "cagk") {
-            mech.set("gkbar", params.gkbar);
-        } else if (params.mech == "cat") {
-            mech.set("gcatbar", params.gcatbar);
-        } else if (params.mech == "gskch") {
-            mech.set("gskbar", params.gskbar);
-        } else if (params.mech == "ichan2") {
-            mech.set("gnatbar", params.gnatbar);
-            mech.set("gkfbar", params.gkfbar);
-            mech.set("gksbar", params.gksbar);
-            mech.set("gl", params.gl);
-            mech.set("el", params.el);
-        } else if (params.mech == "lca") {
-            mech.set("glcabar", params.glcabar);
-        } else if (params.mech == "nca") {
-            mech.set("gncabar", params.gncabar);
-        } else if (params.mech == "ccanl") {
-            mech.set("catau", params.catau);
-            mech.set("caiinf", params.caiinf);
-        }
-        dend->add_mechanism(mech);
-
-        if (params.mech == "ccanl") {
-            cell.default_parameters.reversal_potential_method["nca"] = "ccanlrev";
-            cell.default_parameters.reversal_potential_method["lca"] = "ccanlrev";
-            cell.default_parameters.reversal_potential_method["tca"] = "ccanlrev";
-        }
-
-    } else {
-        auto pas = arb::mechanism_desc("pas");
-        pas.set("g", params.pas_g);
-        pas.set("e", params.pas_e);
-
-        dend->add_mechanism(pas);
-    }
+    dend->add_mechanism(pas);
+    dend->parameters.membrane_capacitance = params.cm/100;
+    dend->parameters.axial_resistivity = params.ra;*/
 
     auto exp2syn = arb::mechanism_desc("exp2syn");
     exp2syn.set("tau1", params.tau1_syn);

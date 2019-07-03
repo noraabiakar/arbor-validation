@@ -30,81 +30,54 @@ syn.tau1 = in_param["tau1_syn"]
 syn.tau2 = in_param["tau2_syn"]
 syn.e = in_param["e_syn"]
 
-if in_param["soma_mech"] :
-    cell.soma.insert(in_param["mech"])
-    if in_param["mech"] == "borgka":
-        cell.soma.gkabar_borgka = in_param["gkabar"]
-    else :
-        if in_param["mech"] == "cagk":
-            cell.soma.gkbar_cagk = in_param["gkbar"]
-        else :
-            if in_param["mech"] == "cat":
-                cell.soma.gcatbar_cat = in_param["gcatbar"]
-            else :
-                if in_param["mech"] == "gskch":
-                    cell.soma.ncai = 15e-6;
-                    cell.soma.lcai = 15e-6;
-                    cell.soma.tcai = 15e-6;
-                    cell.soma.gskbar_gskch = in_param["gskbar"]
-                else :
-                    if in_param["mech"] == "ichan2":
-                        cell.soma.gnatbar_ichan2 = in_param["gnatbar"]
-                        cell.soma.gkfbar_ichan2 = in_param["gkfbar"]
-                        cell.soma.gksbar_ichan2 = in_param["gksbar"]
-                        cell.soma.gl_ichan2 = in_param["gl"]
-                        cell.soma.el_ichan2 = in_param["el"]
-                    else:
-                        if in_param["mech"] == "lca":
-                            cell.soma.glcabar_lca = in_param["glcabar"]
-                        else:
-                            if in_param["mech"] == "nca":
-                                cell.soma.gncabar_nca = in_param["gncabar"]
-                            else :
-                                if in_param["mech"] == "ccanl":
-                                    cell.soma.catau_ccanl = in_param["catau"]
-                                    cell.soma.caiinf_ccanl = in_param["caiinf"]
-else :
-    cell.soma.insert("pas")
-    cell.soma.e_pas = in_param["pas_e"]
-    cell.soma.g_pas = in_param["pas_g"]
+cell.soma.insert('ichan2')
+cell.soma.gnatbar_ichan2 = 0.120 * in_param["gnatbar_ichan2"]
+cell.soma.gkfbar_ichan2  = 0.016 * in_param["gkfbar_ichan2"]
+cell.soma.gksbar_ichan2  = 0.006 * in_param["gksbar_ichan2"]
+cell.soma.gl_ichan2    = 0.00004 * in_param["gl_ichan2"]
+cell.soma.el_ichan2     =          in_param["el_ichan2"]
 
-if in_param["dend_mech"] :
-    cell.dend.insert(in_param["mech"])
-    if in_param["mech"] == "borgka":
-        cell.dend.gkabar_borgka = in_param["gkabar"]
-    else :
-        if in_param["mech"] == "cagk":
-            cell.dend.gkbar_cagk = in_param["gkbar"]
-        else :
-            if in_param["mech"] == "cat":
-                cell.dend.gcatbar_cat = in_param["gcatbar"]
-            else :
-                if in_param["mech"] == "gskch":
-                    cell.dend.ncai = 15e-6;
-                    cell.dend.lcai = 15e-6;
-                    cell.dend.tcai = 15e-6;
-                    cell.dend.gskbar_gskch = in_param["gskbar"]
-                else :
-                    if in_param["mech"] == "ichan2":
-                        cell.dend.gnatbar_ichan2 = in_param["gnatbar"]
-                        cell.dend.gkfbar_ichan2 = in_param["gkfbar"]
-                        cell.dend.gksbar_ichan2 = in_param["gksbar"]
-                        cell.dend.gl_ichan2 = in_param["gl"]
-                        cell.dend.el_ichan2 = in_param["el"]
-                    else:
-                        if in_param["mech"] == "lca":
-                            cell.dend.glcabar_lca = in_param["glcabar"]
-                        else:
-                            if in_param["mech"] == "nca":
-                                cell.dend.gncabar_nca = in_param["gncabar"]
-                            else :
-                                if in_param["mech"] == "ccanl":
-                                    cell.dend.catau_ccanl = in_param["catau"]
-                                    cell.dend.caiinf_ccanl = in_param["caiinf"]
-else :
-    cell.dend.insert("pas")
-    cell.dend.e_pas = in_param["pas_e"]
-    cell.dend.g_pas = in_param["pas_g"]
+cell.soma.insert('borgka')
+cell.soma.gkabar_borgka  = 0.001 * in_param["gkabar_borgka"]
+
+cell.soma.insert('nca')
+cell.soma.gncabar_nca    = 0.001 * in_param["gncabar_nca"]
+
+# cell.soma.insert('lca')
+# cell.soma.glcabar_lca    = 0.005 * in_param["glcabar_lca"]
+#
+# cell.soma.insert('cat')
+# cell.soma.gcatbar_cat = 0.000037 * in_param["gcatbar_cat"]
+#
+# cell.soma.insert('gskch')
+# cell.soma.gskbar_gskch   = 0.001 * in_param["gskbar_gskch"]
+#
+# cell.soma.insert('cagk')
+# cell.soma.gkbar_cagk    = 0.0006 * in_param["gkbar_cagk"]
+#
+# cell.soma.insert('ccanl')
+# cell.soma.catau_ccanl    = 10     * in_param["catau_ccanl"]
+# cell.soma.caiinf_ccanl   = 5.0e-6 * in_param["caiinf_ccanl"]
+
+cell.soma.cm                = 1.0 * in_param["cm_mult"]
+cell.soma.Ra                =       in_param["ra"]
+
+cell.soma.ek        = in_param["ek"]
+# cell.soma.cao       = in_param["cao"]
+
+cell.soma.enca      = 0
+# cell.soma.elca      = in_param["elca"]
+# cell.soma.etca      = in_param["etca"]
+# cell.soma.esk       = in_param["esk"]
+cell.soma.enat      = in_param["enat"]
+cell.soma.ekf       = in_param["ekf"]
+cell.soma.eks       = in_param["eks"]
+
+# cell.dend.insert("pas")
+# cell.dend.e_pas = in_param["pas_e"]
+# cell.dend.g_pas = in_param["pas_g"]
+# cell.dend.Ra = in_param["ra"]
+# cell.dend.cm = in_param["cm"]
 
 ################################
 # Create spike times for input #
@@ -149,7 +122,7 @@ h.celsius = in_param["temp"]
 h("tstep = 0")
 h("period = 2")
 h.tstop = tstop
-h("steps_per_ms = 10")
+h.steps_per_ms = 1/h.dt
 h.load_file('init.hoc')
 
 ##################

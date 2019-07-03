@@ -1,39 +1,56 @@
 {
     "dt_arbor": 0.001,
     "dt_neuron": 0.001,
+    "weight": 1.17,
+
     "temp": 35.0,
     "vinit": -70.0,
+
     "tau1_syn": 0.709067133592,
     "tau2_syn": 4.79049393295,
     "e_syn": 0.0,
-    "syn_seg": 1,
-    "syn_loc": 0.9,
-    "weight": 1.17,
+
+    "syn_seg": 0,
+    "syn_loc": 0.5,
+
     "pas_e": -65.0,
     "pas_g": 0.001,
-    "soma_mech": true,
-    "dend_mech": false,
-    "mech": "ccanl",
-    "gkabar": 20,
 
-    "gkbar": 1,
+    "gnatbar_ichan2": 7.0,
+    "gkfbar_ichan2":  2.25,
+    "gksbar_ichan2":  1.0,
+    "gl_ichan2":      7.2538,
 
-    "gcatbar": 6,
+    "gkabar_borgka":  9.0,
 
-    "gskbar": 3,
+    "gncabar_nca":    0.735294118,
 
-    "gnatbar": 1,
-    "gkfbar": 1,
-    "gksbar": 1,
-    "gl": 1,
-    "el": -54.3,
+    "glcabar_lca":    0.5,
 
-    "glcabar": 0.01,
+    "gcatbar_cat":    2.0,
 
-    "gncabar": 0.1,
+    "gskbar_gskch":   1.0,
 
-    "catau": 9,
-    "caiinf": 50e-6,
+    "gkbar_cagk":     0.2,
+
+    "catau_ccanl":    1.0,
+    "caiinf_ccanl":   1.0,
+
+    "ra_mult":        1.0,
+    "cm_mult":        9.8,
+
+    "ra" : 35.4,
+    "cm" :    1,
+
+    "enat":       45,
+    "ekf":       -90,
+    "eks":       -90,
+    "ek":        -90,
+    "elca":      130,
+    "etca":      130,
+    "esk":       -90,
+    "el_ichan2": -73,
+    "cao":         2,
 
     "spikes" : [
         25.269724183039855

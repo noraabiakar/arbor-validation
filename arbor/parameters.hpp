@@ -13,14 +13,26 @@ std::vector<double> read_spike_times();
 struct single_params {
     std::vector<double> spikes;
     double temp, v_init;
+    double dt, weight;
     double tau1_syn, tau2_syn, e_syn;
-    double gkabar, gkbar, gcatbar, gskbar, gnatbar, gkfbar, gksbar, gl, el, glcabar, gncabar, catau, caiinf;
-    double pas_e, pas_g;
+
     unsigned syn_seg;
     double syn_loc;
-    double dt, weight;
-    bool soma_mech, dend_mech;
-    std::string mech;
+
+    double pas_e, pas_g;
+
+    double gnatbar_ichan2, gkfbar_ichan2, gksbar_ichan2, gl_ichan2;
+    double gkabar_borgka;
+    double gncabar_nca;
+    double glcabar_lca;
+    double gcatbar_cat;
+    double gskbar_gskch;
+    double gkbar_cagk;
+    double catau_ccanl, caiinf_ccanl;
+
+    double ra_mult, cm_mult, ra, cm;
+
+    double enat, ekf, eks, ek, elca, etca, esk, el_ichan2, cao;
 };
 
 single_params read_params(int argc, char** argv) {
@@ -50,30 +62,49 @@ single_params read_params(int argc, char** argv) {
     param_from_json(p.temp, "temp", json);
     param_from_json(p.v_init, "vinit", json);
     param_from_json(p.dt, "dt_arbor", json);
+    param_from_json(p.weight, "weight", json);
     param_from_json(p.tau1_syn, "tau1_syn", json);
     param_from_json(p.tau2_syn, "tau2_syn", json);
     param_from_json(p.e_syn, "e_syn", json);
-    param_from_json(p.gkabar, "gkabar", json);
-    param_from_json(p.gkbar, "gkbar", json);
-    param_from_json(p.gcatbar, "gcatbar", json);
-    param_from_json(p.gskbar, "gskbar", json);
-    param_from_json(p.gnatbar, "gnatbar", json);
-    param_from_json(p.gkfbar, "gkfbar", json);
-    param_from_json(p.gksbar, "gksbar", json);
-    param_from_json(p.gl, "gl", json);
-    param_from_json(p.el, "el", json);
-    param_from_json(p.glcabar, "glcabar", json);
-    param_from_json(p.gncabar, "gncabar", json);
-    param_from_json(p.catau, "catau", json);
-    param_from_json(p.caiinf, "caiinf", json);
-    param_from_json(p.pas_e, "pas_e", json);
-    param_from_json(p.pas_g, "pas_g", json);
     param_from_json(p.syn_seg, "syn_seg", json);
     param_from_json(p.syn_loc, "syn_loc", json);
-    param_from_json(p.weight, "weight", json);
-    param_from_json(p.soma_mech, "soma_mech", json);
-    param_from_json(p.dend_mech, "dend_mech", json);
-    param_from_json(p.mech, "mech", json);
+    param_from_json(p.pas_e, "pas_e", json);
+    param_from_json(p.pas_g, "pas_g", json);
+
+    param_from_json(p.gnatbar_ichan2, "gnatbar_ichan2", json);
+    param_from_json(p.gkfbar_ichan2, "gkfbar_ichan2", json);
+    param_from_json(p.gksbar_ichan2, "gksbar_ichan2", json);
+    param_from_json(p.gl_ichan2, "gl_ichan2", json);
+
+    param_from_json(p.gkabar_borgka, "gkabar_borgka", json);
+
+    param_from_json(p.gncabar_nca, "gncabar_nca", json);
+
+    param_from_json(p.glcabar_lca, "glcabar_lca", json);
+
+    param_from_json(p.gcatbar_cat, "gcatbar_cat", json);
+
+    param_from_json(p.gskbar_gskch, "gskbar_gskch", json);
+
+    param_from_json(p.gkbar_cagk, "gkbar_cagk", json);
+
+    param_from_json(p.catau_ccanl, "catau_ccanl", json);
+    param_from_json(p.caiinf_ccanl, "caiinf_ccanl", json);
+
+    param_from_json(p.ra, "ra", json);
+    param_from_json(p.cm, "cm", json);
+    param_from_json(p.ra_mult, "ra_mult", json);
+    param_from_json(p.cm_mult, "cm_mult", json);
+
+    param_from_json(p.enat, "enat", json);
+    param_from_json(p.ekf, "ekf", json);
+    param_from_json(p.eks, "eks", json);
+    param_from_json(p.ek, "ek", json);
+    param_from_json(p.elca, "elca", json);
+    param_from_json(p.etca, "etca", json);
+    param_from_json(p.esk, "esk", json);
+    param_from_json(p.el_ichan2, "el_ichan2", json);
+    param_from_json(p.cao, "cao", json);
 
     for (auto it=json.begin(); it!=json.end(); ++it) {
         std::cout << "  Warning: unused input parameter: \"" << it.key() << "\"\n";
