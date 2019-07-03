@@ -21,14 +21,6 @@ h.load_file("cell.hoc")
 ##################
 
 cell = h.mkcell()
-if in_param["syn_seg"] == 0 :
-    syn = h.Exp2Syn(cell.soma(in_param["syn_loc"]))
-else :
-    syn = h.Exp2Syn(cell.dend(in_param["syn_loc"]))
-
-syn.tau1 = in_param["tau1_syn"]
-syn.tau2 = in_param["tau2_syn"]
-syn.e = in_param["e_syn"]
 
 cell.soma.insert('ichan2')
 cell.soma.gnatbar_ichan2 = 0.120 * in_param["gnatbar_ichan2"]
@@ -43,41 +35,40 @@ cell.soma.gkabar_borgka  = 0.001 * in_param["gkabar_borgka"]
 cell.soma.insert('nca')
 cell.soma.gncabar_nca    = 0.001 * in_param["gncabar_nca"]
 
-# cell.soma.insert('lca')
-# cell.soma.glcabar_lca    = 0.005 * in_param["glcabar_lca"]
-#
-# cell.soma.insert('cat')
-# cell.soma.gcatbar_cat = 0.000037 * in_param["gcatbar_cat"]
-#
-# cell.soma.insert('gskch')
-# cell.soma.gskbar_gskch   = 0.001 * in_param["gskbar_gskch"]
-#
-# cell.soma.insert('cagk')
-# cell.soma.gkbar_cagk    = 0.0006 * in_param["gkbar_cagk"]
-#
-# cell.soma.insert('ccanl')
-# cell.soma.catau_ccanl    = 10     * in_param["catau_ccanl"]
-# cell.soma.caiinf_ccanl   = 5.0e-6 * in_param["caiinf_ccanl"]
+cell.soma.insert('lca')
+cell.soma.glcabar_lca    = 0.005 * in_param["glcabar_lca"]
+
+cell.soma.insert('cat')
+cell.soma.gcatbar_cat = 0.000037 * in_param["gcatbar_cat"]
+
+cell.soma.insert('gskch')
+cell.soma.gskbar_gskch   = 0.001 * in_param["gskbar_gskch"]
+
+cell.soma.insert('cagk')
+cell.soma.gkbar_cagk    = 0.0006 * in_param["gkbar_cagk"]
+
+cell.soma.insert('ccanl')
+cell.soma.catau_ccanl    = 10     * in_param["catau_ccanl"]
+cell.soma.caiinf_ccanl   = 5.0e-6 * in_param["caiinf_ccanl"]
 
 cell.soma.cm                = 1.0 * in_param["cm_mult"]
 cell.soma.Ra                =       in_param["ra"]
 
+syn = h.Exp2Syn(cell.soma(in_param["syn_loc"]))
+syn.tau1 = in_param["tau1_syn"]
+syn.tau2 = in_param["tau2_syn"]
+syn.e = in_param["e_syn"]
+
 cell.soma.ek        = in_param["ek"]
-# cell.soma.cao       = in_param["cao"]
+cell.soma.cao       = in_param["cao"]
 
 cell.soma.enca      = 0
-# cell.soma.elca      = in_param["elca"]
-# cell.soma.etca      = in_param["etca"]
-# cell.soma.esk       = in_param["esk"]
+cell.soma.elca      = in_param["elca"]
+cell.soma.etca      = in_param["etca"]
+cell.soma.esk       = in_param["esk"]
 cell.soma.enat      = in_param["enat"]
 cell.soma.ekf       = in_param["ekf"]
 cell.soma.eks       = in_param["eks"]
-
-# cell.dend.insert("pas")
-# cell.dend.e_pas = in_param["pas_e"]
-# cell.dend.g_pas = in_param["pas_g"]
-# cell.dend.Ra = in_param["ra"]
-# cell.dend.cm = in_param["cm"]
 
 ################################
 # Create spike times for input #

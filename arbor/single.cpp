@@ -265,31 +265,37 @@ arb::cable_cell single_cell(const single_params& params) {
 
     // Add soma.
     auto soma = cell.add_soma(11.65968/2.0);
-    /*auto tiny_comp = cell.add_cable(0, arb::section_kind::dendrite, 1.165968/2.0, 1.165968/2.0, 0.01);
-    tiny_comp->set_compartments(1);
-    auto dend = cell.add_cable(1, arb::section_kind::dendrite, 1.165968/2.0, 1.165968/2.0, 100);
-    dend->set_compartments(100);*/
+
+    cell.default_parameters.reversal_potential_method["nca"] = "ccanlrev";
+    cell.default_parameters.reversal_potential_method["lca"] = "ccanlrev";
+    cell.default_parameters.reversal_potential_method["tca"] = "ccanlrev";
 
     arb::mechanism_desc ichan2("ichan2");
-    arb::mechanism_desc borgka("borgka");
-    arb::mechanism_desc nca("nca");
-    arb::mechanism_desc lca("lca");
-    arb::mechanism_desc cat("cat");
-    arb::mechanism_desc gskch("gskch");
-    arb::mechanism_desc cagk("cagk");
-    arb::mechanism_desc ccanl("ccanl");
-
     ichan2["gnatbar"] = 0.120    * params.gnatbar_ichan2;
     ichan2["gkfbar"]  = 0.016    * params.gkfbar_ichan2;
     ichan2["gksbar"]  = 0.006    * params.gksbar_ichan2;
     ichan2["gl"]      = 0.00004  * params.gl_ichan2;
     ichan2["el"]      =            params.el_ichan2;
+
+    arb::mechanism_desc borgka("borgka");
     borgka["gkabar"]  = 0.001    * params.gkabar_borgka;
+
+    arb::mechanism_desc nca("nca");
     nca["gncabar"]    = 0.001    * params.gncabar_nca;
+
+    arb::mechanism_desc lca("lca");
     lca["glcabar"]    = 0.005    * params.glcabar_lca;
+
+    arb::mechanism_desc cat("cat");
     cat["gcatbar"]    = 0.000037 * params.gcatbar_cat;
+
+    arb::mechanism_desc gskch("gskch");
     gskch["gskbar"]   = 0.001    * params.gskbar_gskch;
+
+    arb::mechanism_desc cagk("cagk");
     cagk["gkbar"]     = 0.0006   * params.gkbar_cagk;
+
+    arb::mechanism_desc ccanl("ccanl");
     ccanl["catau"]    = 10       * params.catau_ccanl;
     ccanl["caiinf"]   = 5.0e-6   * params.caiinf_ccanl;
 
@@ -299,28 +305,18 @@ arb::cable_cell single_cell(const single_params& params) {
     soma->add_mechanism(ichan2);
     soma->add_mechanism(borgka);
     soma->add_mechanism(nca);
-//    soma->add_mechanism(lca);
-//    soma->add_mechanism(cat);
-//    soma->add_mechanism(gskch);
-//    soma->add_mechanism(cagk);
-//    soma->add_mechanism(ccanl);
-
-    /*auto pas = arb::mechanism_desc("pas");
-    pas.set("g", params.pas_g);
-    pas.set("e", params.pas_e);
-
-    dend->add_mechanism(pas);
-    dend->parameters.membrane_capacitance = params.cm/100;
-    dend->parameters.axial_resistivity = params.ra;*/
+    soma->add_mechanism(lca);
+    soma->add_mechanism(cat);
+    soma->add_mechanism(gskch);
+    soma->add_mechanism(cagk);
+    soma->add_mechanism(ccanl);
 
     auto exp2syn = arb::mechanism_desc("exp2syn");
     exp2syn.set("tau1", params.tau1_syn);
     exp2syn.set("tau2", params.tau2_syn);
     exp2syn.set("e", params.e_syn);
 
-    auto syn_seg = params.syn_seg == 1? params.syn_seg +1 : params.syn_seg; //shim fix
-    cell.add_synapse({syn_seg, params.syn_loc}, exp2syn);
-    std::cout << params.syn_seg << " " << params.syn_loc << std::endl;
+    cell.add_synapse({0, params.syn_loc}, exp2syn);
 
     return cell;
 }

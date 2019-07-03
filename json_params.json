@@ -1,6 +1,6 @@
 {
-    "dt_arbor": 0.001,
-    "dt_neuron": 0.001,
+    "dt_arbor": 0.025,
+    "dt_neuron": 0.025,
     "weight": 1.17,
 
     "temp": 35.0,
@@ -10,7 +10,6 @@
     "tau2_syn": 4.79049393295,
     "e_syn": 0.0,
 
-    "syn_seg": 0,
     "syn_loc": 0.5,
 
     "pas_e": -65.0,
