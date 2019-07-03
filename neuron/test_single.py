@@ -35,27 +35,30 @@ if in_param["soma_mech"] :
     if in_param["mech"] == "borgka":
         cell.soma.gkabar_borgka = in_param["gkabar"]
     else :
-        if in_param["mech"] == "cat":
-            cell.soma.gcatbar_cat = in_param["gcatbar"]
+        if in_param["mech"] == "cagk":
+            cell.soma.gkbar_cagk = in_param["gkbar"]
         else :
-            if in_param["mech"] == "gskch":
-                cell.soma.ncai = 15e-6;
-                cell.soma.lcai = 15e-6;
-                cell.soma.tcai = 15e-6;
-                cell.soma.gskbar_gskch = in_param["gskbar"]
+            if in_param["mech"] == "cat":
+                cell.soma.gcatbar_cat = in_param["gcatbar"]
             else :
-                if in_param["mech"] == "ichan2":
-                    cell.soma.gnatbar_ichan2 = in_param["gnatbar"]
-                    cell.soma.gkfbar_ichan2 = in_param["gkfbar"]
-                    cell.soma.gksbar_ichan2 = in_param["gksbar"]
-                    cell.soma.gl_ichan2 = in_param["gl"]
-                    cell.soma.el_ichan2 = in_param["el"]
-                else:
-                    if in_param["mech"] == "lca":
-                        cell.soma.glcabar_lca = in_param["glcabar"]
+                if in_param["mech"] == "gskch":
+                    cell.soma.ncai = 15e-6;
+                    cell.soma.lcai = 15e-6;
+                    cell.soma.tcai = 15e-6;
+                    cell.soma.gskbar_gskch = in_param["gskbar"]
+                else :
+                    if in_param["mech"] == "ichan2":
+                        cell.soma.gnatbar_ichan2 = in_param["gnatbar"]
+                        cell.soma.gkfbar_ichan2 = in_param["gkfbar"]
+                        cell.soma.gksbar_ichan2 = in_param["gksbar"]
+                        cell.soma.gl_ichan2 = in_param["gl"]
+                        cell.soma.el_ichan2 = in_param["el"]
                     else:
-                        if in_param["mech"] == "nca":
-                            cell.soma.gncabar_nca = in_param["gncabar"]
+                        if in_param["mech"] == "lca":
+                            cell.soma.glcabar_lca = in_param["glcabar"]
+                        else:
+                            if in_param["mech"] == "nca":
+                                cell.soma.gncabar_nca = in_param["gncabar"]
 else :
     cell.soma.insert("pas")
     cell.soma.e_pas = in_param["pas_e"]
@@ -64,7 +67,32 @@ else :
 if in_param["dend_mech"] :
     cell.dend.insert(in_param["mech"])
     if in_param["mech"] == "borgka":
-        cell.soma.gkabar_borgka = in_param["gkabar"]
+        cell.dend.gkabar_borgka = in_param["gkabar"]
+    else :
+        if in_param["mech"] == "cagk":
+            cell.dend.gkbar_cagk = in_param["gkbar"]
+        else :
+            if in_param["mech"] == "cat":
+                cell.dend.gcatbar_cat = in_param["gcatbar"]
+            else :
+                if in_param["mech"] == "gskch":
+                    cell.dend.ncai = 15e-6;
+                    cell.dend.lcai = 15e-6;
+                    cell.dend.tcai = 15e-6;
+                    cell.dend.gskbar_gskch = in_param["gskbar"]
+                else :
+                    if in_param["mech"] == "ichan2":
+                        cell.dend.gnatbar_ichan2 = in_param["gnatbar"]
+                        cell.dend.gkfbar_ichan2 = in_param["gkfbar"]
+                        cell.dend.gksbar_ichan2 = in_param["gksbar"]
+                        cell.dend.gl_ichan2 = in_param["gl"]
+                        cell.dend.el_ichan2 = in_param["el"]
+                    else:
+                        if in_param["mech"] == "lca":
+                            cell.dend.glcabar_lca = in_param["glcabar"]
+                        else:
+                            if in_param["mech"] == "nca":
+                                cell.dend.gncabar_nca = in_param["gncabar"]
 else :
     cell.dend.insert("pas")
     cell.dend.e_pas = in_param["pas_e"]

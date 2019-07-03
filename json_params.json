@@ -6,23 +6,30 @@
     "tau1_syn": 0.709067133592,
     "tau2_syn": 4.79049393295,
     "e_syn": 0.0,
-    "syn_seg": 0,
+    "syn_seg": 1,
     "syn_loc": 0.9,
     "weight": 1.17,
     "pas_e": -65.0,
     "pas_g": 0.001,
     "soma_mech": true,
     "dend_mech": false,
-    "mech": "ichan2",
-    "gkabar": 10,
-    "gcatbar": 3,
-    "gskbar": 1000000,
-    "gnatbar": 2,
-    "gkfbar": 4,
-    "gksbar": 4,
-    "gl": 4,
+    "mech": "nca",
+    "gkabar": 20,
+
+    "gkbar": 1,
+
+    "gcatbar": 6,
+
+    "gskbar": 3,
+
+    "gnatbar": 1,
+    "gkfbar": 1,
+    "gksbar": 1,
+    "gl": 1,
     "el": -54.3,
-    "glcabar": 4,
-    "gncabar": 2
+
+    "glcabar": 0.01,
+
+    "gncabar": 0.1
 }
 

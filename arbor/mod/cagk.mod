@@ -17,7 +17,7 @@ NEURON {
     USEION lca READ lcai VALENCE 2
     USEION tca READ tcai VALENCE 2
     USEION k READ ek WRITE ik
-    RANGE gkca, oinf, otau, cai, v
+    RANGE gkbar, gkca, oinf, otau, cai, v
 }
 
 UNITS {

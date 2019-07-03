@@ -179,9 +179,9 @@ int main(int argc, char** argv) {
         soma_recipe recipe(params);
 
         if(params.mech == "cagk" || params.mech == "ccanl") {
-            recipe.add_ion("nca", 2, 1, 2.0/3, 0);
-            recipe.add_ion("lca", 2, 1, 2.0/3, 0);
-            recipe.add_ion("tca", 2, 1, 2.0/3, 0);
+            recipe.add_ion("nca", 2, 1.0, 1.0, 0);
+            recipe.add_ion("lca", 2, 1.0, 1.0, 0);
+            recipe.add_ion("tca", 2, 1.0, 1.0, 0);
         }
         else if(params.mech == "cat") {
             recipe.add_ion("tca", 2, 1.0, 1.0, 0);
@@ -215,7 +215,7 @@ int main(int argc, char** argv) {
         auto probe_id = cell_member_type{0, 0};
 
         // The schedule for sampling is 10 samples every 1 ms.
-        auto sched = arb::regular_schedule(0.025);
+        auto sched = arb::regular_schedule(0.001);
 
         // This is where the voltage samples will be stored as (time, value) pairs
         arb::trace_data<double> voltage;
@@ -308,6 +308,8 @@ arb::cable_cell single_cell(const single_params& params) {
         auto mech = arb::mechanism_desc(params.mech);
         if (params.mech == "borgka") {
             mech.set("gkabar", params.gkabar);
+        } else if (params.mech == "cagk") {
+            mech.set("gkbar", params.gkbar);
         } else if (params.mech == "cat") {
             mech.set("gcatbar", params.gcatbar);
         } else if (params.mech == "gskch") {
@@ -343,8 +345,22 @@ arb::cable_cell single_cell(const single_params& params) {
         auto mech = arb::mechanism_desc(params.mech);
         if (params.mech == "borgka") {
             mech.set("gkabar", params.gkabar);
+        } else if (params.mech == "cagk") {
+            mech.set("gkbar", params.gkbar);
         } else if (params.mech == "cat") {
             mech.set("gcatbar", params.gcatbar);
+        } else if (params.mech == "gskch") {
+            mech.set("gskbar", params.gskbar);
+        } else if (params.mech == "ichan2") {
+            mech.set("gnatbar", params.gnatbar);
+            mech.set("gkfbar", params.gkfbar);
+            mech.set("gksbar", params.gksbar);
+            mech.set("gl", params.gl);
+            mech.set("el", params.el);
+        } else if (params.mech == "lca") {
+            mech.set("glcabar", params.glcabar);
+        } else if (params.mech == "nca") {
+            mech.set("gncabar", params.gncabar);
         }
         dend->add_mechanism(mech);
 
@@ -367,7 +383,8 @@ arb::cable_cell single_cell(const single_params& params) {
     exp2syn.set("tau2", params.tau2_syn);
     exp2syn.set("e", params.e_syn);
 
-    cell.add_synapse({params.syn_seg, params.syn_loc}, exp2syn);
+    auto syn_seg = params.syn_seg == 1? params.syn_seg +1 : params.syn_seg; //shim fix
+    cell.add_synapse({syn_seg, params.syn_loc}, exp2syn);
     std::cout << params.syn_seg << " " << params.syn_loc << std::endl;
 
     return cell;
