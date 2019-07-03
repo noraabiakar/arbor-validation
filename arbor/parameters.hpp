@@ -11,9 +11,10 @@
 std::vector<double> read_spike_times();
 
 struct single_params {
+    std::vector<double> spikes;
     double temp, v_init;
     double tau1_syn, tau2_syn, e_syn;
-    double gkabar, gkbar, gcatbar, gskbar, gnatbar, gkfbar, gksbar, gl, el, glcabar, gncabar;
+    double gkabar, gkbar, gcatbar, gskbar, gnatbar, gkfbar, gksbar, gl, el, glcabar, gncabar, catau, caiinf;
     double pas_e, pas_g;
     unsigned syn_seg;
     double syn_loc;
@@ -45,6 +46,7 @@ single_params read_params(int argc, char** argv) {
     nlohmann::json json;
     json << f;
 
+    param_from_json(p.spikes, "spikes", json);
     param_from_json(p.temp, "temp", json);
     param_from_json(p.v_init, "vinit", json);
     param_from_json(p.dt, "dt_arbor", json);
@@ -62,6 +64,8 @@ single_params read_params(int argc, char** argv) {
     param_from_json(p.el, "el", json);
     param_from_json(p.glcabar, "glcabar", json);
     param_from_json(p.gncabar, "gncabar", json);
+    param_from_json(p.catau, "catau", json);
+    param_from_json(p.caiinf, "caiinf", json);
     param_from_json(p.pas_e, "pas_e", json);
     param_from_json(p.pas_g, "pas_g", json);
     param_from_json(p.syn_seg, "syn_seg", json);
