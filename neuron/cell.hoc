@@ -3,17 +3,24 @@
 
 begintemplate Cell
     public soma, dend
-    create soma, dend
+    create soma, dend[2]
 proc init() {
-    connect dend(0), soma(0.5)
+    connect dend[0](0), soma(0.5)
+    connect dend[1](0), dend[0](1)
 
     soma.L = 11.65968
     soma.diam = 11.65968
-    dend.L = 100.0
-    dend.diam = 1.165968
+
+    dend[0].L = 0.1
+    dend[0].diam = 1.165968
+
+
+    dend[1].L = 100.0
+    dend[1].diam = 1.165968
 
     soma.nseg = 1
-    dend.nseg = 100
+    dend[0].nseg = 1
+    dend[1].nseg = 100
 
     define_shape()
 }

@@ -265,7 +265,8 @@ arb::cable_cell single_cell(const single_params& params) {
 
     // Add soma.
     auto soma = cell.add_soma(11.65968/2.0);
-    auto dend = cell.add_cable(0, arb::section_kind::dendrite, 1.165968/2.0, 1.165968/2.0, 100);
+    auto shim = cell.add_cable(0, arb::section_kind::dendrite, 1.165968/2.0, 1.165968/2.0, 0.1);
+    auto dend = cell.add_cable(1, arb::section_kind::dendrite, 1.165968/2.0, 1.165968/2.0, 100);
     dend->set_compartments(100);
 
     auto pas = arb::mechanism_desc("pas");
