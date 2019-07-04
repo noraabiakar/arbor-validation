@@ -275,9 +275,9 @@ arb::cable_cell single_cell(const single_params& params) {
     dend->parameters.membrane_capacitance = params.cm/100;
     dend->parameters.axial_resistivity = params.ra;
 
-    cell.default_parameters.reversal_potential_method["nca"] = "ccanlrev";
-    cell.default_parameters.reversal_potential_method["lca"] = "ccanlrev";
-    cell.default_parameters.reversal_potential_method["tca"] = "ccanlrev";
+//    cell.default_parameters.reversal_potential_method["nca"] = "ccanlrev";
+//    cell.default_parameters.reversal_potential_method["lca"] = "ccanlrev";
+//    cell.default_parameters.reversal_potential_method["tca"] = "ccanlrev";
 
     arb::mechanism_desc ichan2("ichan2");
     ichan2["gnatbar"] = 0.120    * params.gnatbar_ichan2;
@@ -304,9 +304,9 @@ arb::cable_cell single_cell(const single_params& params) {
     arb::mechanism_desc cagk("cagk");
     cagk["gkbar"]     = 0.0006   * params.gkbar_cagk;
 
-    arb::mechanism_desc ccanl("ccanl");
-    ccanl["catau"]    = 10       * params.catau_ccanl;
-    ccanl["caiinf"]   = 5.0e-6   * params.caiinf_ccanl;
+//    arb::mechanism_desc ccanl("ccanl");
+//    ccanl["catau"]    = 10       * params.catau_ccanl;
+//    ccanl["caiinf"]   = 5.0e-6   * params.caiinf_ccanl;
 
     soma->parameters.membrane_capacitance = 1.0 * params.cm_mult/100;
     soma->parameters.axial_resistivity = params.ra;
@@ -318,7 +318,7 @@ arb::cable_cell single_cell(const single_params& params) {
     soma->add_mechanism(cat);
     soma->add_mechanism(gskch);
     soma->add_mechanism(cagk);
-    soma->add_mechanism(ccanl);
+//    soma->add_mechanism(ccanl);
 
     auto exp2syn = arb::mechanism_desc("exp2syn");
     exp2syn.set("tau1", params.tau1_syn);

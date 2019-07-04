@@ -53,9 +53,9 @@ cell.soma.gskbar_gskch   = 0.001 * in_param["gskbar_gskch"]
 cell.soma.insert('cagk')
 cell.soma.gkbar_cagk    = 0.0006 * in_param["gkbar_cagk"]
 
-cell.soma.insert('ccanl')
-cell.soma.catau_ccanl    = 10     * in_param["catau_ccanl"]
-cell.soma.caiinf_ccanl   = 5.0e-6 * in_param["caiinf_ccanl"]
+# cell.soma.insert('ccanl')
+# cell.soma.catau_ccanl    = 10     * in_param["catau_ccanl"]
+# cell.soma.caiinf_ccanl   = 5.0e-6 * in_param["caiinf_ccanl"]
 
 cell.soma.cm                = 1.0 * in_param["cm_mult"]
 cell.soma.Ra                =       in_param["ra"]
