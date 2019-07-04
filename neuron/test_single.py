@@ -22,11 +22,8 @@ h.load_file("cell.hoc")
 
 cell = h.mkcell()
 
-cell.dend[1].insert("pas")
-cell.dend[1].e_pas = in_param["pas_e"]
-cell.dend[1].g_pas = in_param["pas_g"]
-cell.dend[1].Ra = in_param["ra"]
-cell.dend[1].cm = in_param["cm"]
+# cell.dend.Ra = in_param["ra"]
+# cell.dend.cm = in_param["cm"]
 
 cell.soma.insert('ichan2')
 cell.soma.gnatbar_ichan2 = 0.120 * in_param["gnatbar_ichan2"]

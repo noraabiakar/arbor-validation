@@ -2,6 +2,49 @@
 {load_file("import3d.hoc")}
 
 begintemplate Cell
+    public soma
+    create soma
+proc init() {
+    soma.L = 11.65968
+    soma.diam = 11.65968
+
+    soma.nseg = 1
+
+    define_shape()
+}
+endtemplate Cell
+
+obfunc mkcell() { localobj import, cell
+    cell = new Cell()
+    return cell
+}
+
+/*
+begintemplate Cell
+    public soma, dend
+    create soma, dend
+proc init() {
+    connect dend(0), soma(0.5)
+
+    soma.L = 11.65968
+    soma.diam = 11.65968
+
+    dend.L = 100.0
+    dend.diam = 1.165968
+
+    soma.nseg = 1
+    dend.nseg = 100
+
+    define_shape()
+}
+endtemplate Cell
+
+obfunc mkcell() { localobj import, cell
+    cell = new Cell()
+    return cell
+}
+
+begintemplate Cell
     public soma, dend
     create soma, dend[2]
 proc init() {
@@ -30,3 +73,4 @@ obfunc mkcell() { localobj import, cell
     cell = new Cell()
     return cell
 }
+*/
