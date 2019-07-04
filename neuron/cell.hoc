@@ -1,7 +1,7 @@
 {load_file("stdrun.hoc")}
 {load_file("import3d.hoc")}
 
-begintemplate Cell
+/*begintemplate Cell
     public soma
     create soma
 proc init() {
@@ -17,9 +17,9 @@ endtemplate Cell
 obfunc mkcell() { localobj import, cell
     cell = new Cell()
     return cell
-}
+}*/
 
-/*
+
 begintemplate Cell
     public soma, dend
     create soma, dend
@@ -44,7 +44,7 @@ obfunc mkcell() { localobj import, cell
     return cell
 }
 
-begintemplate Cell
+/*begintemplate Cell
     public soma, dend
     create soma, dend[2]
 proc init() {
